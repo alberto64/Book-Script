@@ -1,8 +1,6 @@
 # -----------------------------------------------------------------------------
-# calc.py
+# lex-analizer.py
 #
-# A simple calculator with variables.   This is from O'Reilly's
-# "Lex and Yacc", p. 63.
 # -----------------------------------------------------------------------------
 
 import sys
@@ -14,9 +12,9 @@ sys.path.insert(0, "../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-tokens = (
-    'NAME', 'NUMBER',
-)
+tokens = [
+    'VARIABLE', 'INTEGER', 'COMMAND', 'STRING', 'DOUBLE'
+]
 
 literals = ['=', '+', '-', '*', '/', '(', ')']
 
@@ -25,12 +23,17 @@ literals = ['=', '+', '-', '*', '/', '(', ')']
 t_NAME = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
 
-def t_NUMBER(t):
+def t_integer(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
-t_ignore = " \t"
+def t_double(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+    t_ignore = " \t"
 
 
 def t_newline(t):
