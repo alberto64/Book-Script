@@ -3,7 +3,7 @@ Created by PLY version 3.10 (http://www.dabeaz.com/ply)
 Grammar
 
 Rule 0     S' -> statement
-Rule 1     statement -> NAME = expression
+Rule 1     statement -> VARIABLE = expression
 Rule 2     statement -> expression
 Rule 3     expression -> expression + expression
 Rule 4     expression -> expression - expression
@@ -11,8 +11,9 @@ Rule 5     expression -> expression * expression
 Rule 6     expression -> expression / expression
 Rule 7     expression -> - expression
 Rule 8     expression -> ( expression )
-Rule 9     expression -> NUMBER
-Rule 10    expression -> NAME
+Rule 9     expression -> INTEGER
+Rule 10    expression -> FLOAT
+Rule 11    expression -> VARIABLE
 
 Terminals, with rules where they appear
 
@@ -23,8 +24,9 @@ Terminals, with rules where they appear
 -                    : 4 7
 /                    : 6
 =                    : 1
-NAME                 : 1 10
-NUMBER               : 9
+FLOAT                : 10
+INTEGER              : 9
+VARIABLE             : 1 11
 error                : 
 
 Nonterminals, with rules where they appear
@@ -37,7 +39,7 @@ Parsing method: LALR
 state 0
 
     (0) S' -> . statement
-    (1) statement -> . NAME = expression
+    (1) statement -> . VARIABLE = expression
     (2) statement -> . expression
     (3) expression -> . expression + expression
     (4) expression -> . expression - expression
@@ -45,13 +47,15 @@ state 0
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
-    NAME            shift and go to state 2
+    VARIABLE        shift and go to state 2
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
 
     statement                      shift and go to state 1
     expression                     shift and go to state 3
@@ -64,15 +68,15 @@ state 1
 
 state 2
 
-    (1) statement -> NAME . = expression
-    (10) expression -> NAME .
+    (1) statement -> VARIABLE . = expression
+    (11) expression -> VARIABLE .
 
-    =               shift and go to state 7
-    +               reduce using rule 10 (expression -> NAME .)
-    -               reduce using rule 10 (expression -> NAME .)
-    *               reduce using rule 10 (expression -> NAME .)
-    /               reduce using rule 10 (expression -> NAME .)
-    $end            reduce using rule 10 (expression -> NAME .)
+    =               shift and go to state 8
+    +               reduce using rule 11 (expression -> VARIABLE .)
+    -               reduce using rule 11 (expression -> VARIABLE .)
+    *               reduce using rule 11 (expression -> VARIABLE .)
+    /               reduce using rule 11 (expression -> VARIABLE .)
+    $end            reduce using rule 11 (expression -> VARIABLE .)
 
 
 state 3
@@ -84,10 +88,10 @@ state 3
     (6) expression -> expression . / expression
 
     $end            reduce using rule 2 (statement -> expression .)
-    +               shift and go to state 8
-    -               shift and go to state 9
-    *               shift and go to state 10
-    /               shift and go to state 11
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    /               shift and go to state 12
 
 
 state 4
@@ -99,15 +103,17 @@ state 4
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 12
+    expression                     shift and go to state 13
 
 state 5
 
@@ -118,48 +124,64 @@ state 5
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 14
+    expression                     shift and go to state 15
 
 state 6
 
-    (9) expression -> NUMBER .
+    (9) expression -> INTEGER .
 
-    +               reduce using rule 9 (expression -> NUMBER .)
-    -               reduce using rule 9 (expression -> NUMBER .)
-    *               reduce using rule 9 (expression -> NUMBER .)
-    /               reduce using rule 9 (expression -> NUMBER .)
-    $end            reduce using rule 9 (expression -> NUMBER .)
-    )               reduce using rule 9 (expression -> NUMBER .)
+    +               reduce using rule 9 (expression -> INTEGER .)
+    -               reduce using rule 9 (expression -> INTEGER .)
+    *               reduce using rule 9 (expression -> INTEGER .)
+    /               reduce using rule 9 (expression -> INTEGER .)
+    $end            reduce using rule 9 (expression -> INTEGER .)
+    )               reduce using rule 9 (expression -> INTEGER .)
 
 
 state 7
 
-    (1) statement -> NAME = . expression
+    (10) expression -> FLOAT .
+
+    +               reduce using rule 10 (expression -> FLOAT .)
+    -               reduce using rule 10 (expression -> FLOAT .)
+    *               reduce using rule 10 (expression -> FLOAT .)
+    /               reduce using rule 10 (expression -> FLOAT .)
+    $end            reduce using rule 10 (expression -> FLOAT .)
+    )               reduce using rule 10 (expression -> FLOAT .)
+
+
+state 8
+
+    (1) statement -> VARIABLE = . expression
     (3) expression -> . expression + expression
     (4) expression -> . expression - expression
     (5) expression -> . expression * expression
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 15
+    expression                     shift and go to state 16
 
-state 8
+state 9
 
     (3) expression -> expression + . expression
     (3) expression -> . expression + expression
@@ -168,17 +190,19 @@ state 8
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 16
+    expression                     shift and go to state 17
 
-state 9
+state 10
 
     (4) expression -> expression - . expression
     (3) expression -> . expression + expression
@@ -187,17 +211,19 @@ state 9
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 17
+    expression                     shift and go to state 18
 
-state 10
+state 11
 
     (5) expression -> expression * . expression
     (3) expression -> . expression + expression
@@ -206,17 +232,19 @@ state 10
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 18
+    expression                     shift and go to state 19
 
-state 11
+state 12
 
     (6) expression -> expression / . expression
     (3) expression -> . expression + expression
@@ -225,17 +253,19 @@ state 11
     (6) expression -> . expression / expression
     (7) expression -> . - expression
     (8) expression -> . ( expression )
-    (9) expression -> . NUMBER
-    (10) expression -> . NAME
+    (9) expression -> . INTEGER
+    (10) expression -> . FLOAT
+    (11) expression -> . VARIABLE
 
     -               shift and go to state 4
     (               shift and go to state 5
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 13
+    INTEGER         shift and go to state 6
+    FLOAT           shift and go to state 7
+    VARIABLE        shift and go to state 14
 
-    expression                     shift and go to state 19
+    expression                     shift and go to state 20
 
-state 12
+state 13
 
     (7) expression -> - expression .
     (3) expression -> expression . + expression
@@ -250,25 +280,25 @@ state 12
     $end            reduce using rule 7 (expression -> - expression .)
     )               reduce using rule 7 (expression -> - expression .)
 
-  ! +               [ shift and go to state 8 ]
-  ! -               [ shift and go to state 9 ]
-  ! *               [ shift and go to state 10 ]
-  ! /               [ shift and go to state 11 ]
-
-
-state 13
-
-    (10) expression -> NAME .
-
-    +               reduce using rule 10 (expression -> NAME .)
-    -               reduce using rule 10 (expression -> NAME .)
-    *               reduce using rule 10 (expression -> NAME .)
-    /               reduce using rule 10 (expression -> NAME .)
-    $end            reduce using rule 10 (expression -> NAME .)
-    )               reduce using rule 10 (expression -> NAME .)
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! /               [ shift and go to state 12 ]
 
 
 state 14
+
+    (11) expression -> VARIABLE .
+
+    +               reduce using rule 11 (expression -> VARIABLE .)
+    -               reduce using rule 11 (expression -> VARIABLE .)
+    *               reduce using rule 11 (expression -> VARIABLE .)
+    /               reduce using rule 11 (expression -> VARIABLE .)
+    $end            reduce using rule 11 (expression -> VARIABLE .)
+    )               reduce using rule 11 (expression -> VARIABLE .)
+
+
+state 15
 
     (8) expression -> ( expression . )
     (3) expression -> expression . + expression
@@ -276,29 +306,29 @@ state 14
     (5) expression -> expression . * expression
     (6) expression -> expression . / expression
 
-    )               shift and go to state 20
-    +               shift and go to state 8
-    -               shift and go to state 9
-    *               shift and go to state 10
-    /               shift and go to state 11
+    )               shift and go to state 21
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    /               shift and go to state 12
 
 
-state 15
+state 16
 
-    (1) statement -> NAME = expression .
+    (1) statement -> VARIABLE = expression .
     (3) expression -> expression . + expression
     (4) expression -> expression . - expression
     (5) expression -> expression . * expression
     (6) expression -> expression . / expression
 
-    $end            reduce using rule 1 (statement -> NAME = expression .)
-    +               shift and go to state 8
-    -               shift and go to state 9
-    *               shift and go to state 10
-    /               shift and go to state 11
+    $end            reduce using rule 1 (statement -> VARIABLE = expression .)
+    +               shift and go to state 9
+    -               shift and go to state 10
+    *               shift and go to state 11
+    /               shift and go to state 12
 
 
-state 16
+state 17
 
     (3) expression -> expression + expression .
     (3) expression -> expression . + expression
@@ -310,16 +340,16 @@ state 16
     -               reduce using rule 3 (expression -> expression + expression .)
     $end            reduce using rule 3 (expression -> expression + expression .)
     )               reduce using rule 3 (expression -> expression + expression .)
-    *               shift and go to state 10
-    /               shift and go to state 11
+    *               shift and go to state 11
+    /               shift and go to state 12
 
   ! *               [ reduce using rule 3 (expression -> expression + expression .) ]
   ! /               [ reduce using rule 3 (expression -> expression + expression .) ]
-  ! +               [ shift and go to state 8 ]
-  ! -               [ shift and go to state 9 ]
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
 
 
-state 17
+state 18
 
     (4) expression -> expression - expression .
     (3) expression -> expression . + expression
@@ -331,16 +361,16 @@ state 17
     -               reduce using rule 4 (expression -> expression - expression .)
     $end            reduce using rule 4 (expression -> expression - expression .)
     )               reduce using rule 4 (expression -> expression - expression .)
-    *               shift and go to state 10
-    /               shift and go to state 11
+    *               shift and go to state 11
+    /               shift and go to state 12
 
   ! *               [ reduce using rule 4 (expression -> expression - expression .) ]
   ! /               [ reduce using rule 4 (expression -> expression - expression .) ]
-  ! +               [ shift and go to state 8 ]
-  ! -               [ shift and go to state 9 ]
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
 
 
-state 18
+state 19
 
     (5) expression -> expression * expression .
     (3) expression -> expression . + expression
@@ -355,13 +385,13 @@ state 18
     $end            reduce using rule 5 (expression -> expression * expression .)
     )               reduce using rule 5 (expression -> expression * expression .)
 
-  ! +               [ shift and go to state 8 ]
-  ! -               [ shift and go to state 9 ]
-  ! *               [ shift and go to state 10 ]
-  ! /               [ shift and go to state 11 ]
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! /               [ shift and go to state 12 ]
 
 
-state 19
+state 20
 
     (6) expression -> expression / expression .
     (3) expression -> expression . + expression
@@ -376,13 +406,13 @@ state 19
     $end            reduce using rule 6 (expression -> expression / expression .)
     )               reduce using rule 6 (expression -> expression / expression .)
 
-  ! +               [ shift and go to state 8 ]
-  ! -               [ shift and go to state 9 ]
-  ! *               [ shift and go to state 10 ]
-  ! /               [ shift and go to state 11 ]
+  ! +               [ shift and go to state 9 ]
+  ! -               [ shift and go to state 10 ]
+  ! *               [ shift and go to state 11 ]
+  ! /               [ shift and go to state 12 ]
 
 
-state 20
+state 21
 
     (8) expression -> ( expression ) .
 
