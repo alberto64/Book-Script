@@ -12,28 +12,59 @@ sys.path.insert(0, "../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-tokens = [
-    'VARIABLE', 'INTEGER', 'FLOAT', 'PERIOD', 'STRING' # , 'COMMAND'
-]
+reserved = {
+    'goto': 'GOTO',
+    'then': 'THEN',
+    'else': 'ELSE',
+    'while': 'WHILE',
+    'view': 'VIEW',
+    'rent': 'RENT',
+    'where': 'WHERE',
+    'back': 'BACK',
+    'login': 'LOGIN',
+    'help': 'HELP',
+    'sort': 'SORT',
+    'due': 'DUE',
+    'reversed': 'REVERSE',
+    'edit': 'EDIT',
+    'add': 'ADD',
+    'delete': 'DELETE',
+    'create': 'CREATE'
+}
 
-literals = ['=', '+', '-', '*', '/', '(', ')']
+
+tokens = [
+    'VARIABLE', 'INTEGER', 'FLOAT', 'PERIOD', 'STRING', 'CHAR', 'EQUAL', 'NEQUAL', 'LPAREN', 'RPAREN', 'COMMENT'
+] + list(reserved.values())
 
 # Tokens
 
-t_VARIABLE = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_STRING = r'\"[a-zA-Z0-9\W\s]*\"'
 t_ignore = " \t"
 t_PERIOD = r'\.'
+t_CHAR = r'\'(\s|\S)?\''
+t_EQUAL = r'=='
+t_NEQUAL = r'!='
+t_LPAREN = r'('
+t_RPAREN = r')'
+t_ignore_COMMENT = r'\#.*'
 
-def t_INTEGER(t):
-    r'\d+'
-    t.value = int(t.value)
+
+def t_VARIABLE(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value,'VARIABLE')    # Check for reserved words
     return t
 
 
 def t_FLOAT(t):
-    r'\f+'
+    r'[-+]?((\d+\.\d*)|(\d*\.\d+))'
     t.value = float(t.value)
+    return t
+
+
+def t_INTEGER(t):
+    r'[-+]?\d+'
+    t.value = int(t.value)
     return t
 
 
