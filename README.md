@@ -8,12 +8,12 @@ To run, you need Python 3 on your machine. Once Python 3 is installed, open a te
 
 Currently this program supports the following commands:
 
-* GOTO
-* LOGIN
-* VIEW
-* BACK
-* WHERE
-* DUE
+* goto
+* login
+* view
+* back
+* where
+* due
 
 Since the application is not connected to a database, all the values that will appear will be simulated data.
 
@@ -21,23 +21,27 @@ Since the application is not connected to a database, all the values that will a
 ## Example Usage
 ### Example #1
 ```
-LIBRARY > VIEW
+LIBRARY > view
 Shelves in Library Borders
         Shelf 5
         Shelf 2
-LIBRARY > GOTO SHELF 5
+LIBRARY > where "Harry Potter"
+Book "Harry Potter" is found in:
+	Shelf 5
+	Shelf 7
+LIBRARY > goto SHELF 5
 LIBRARY/Shelf2 > view
 Books in Shelf 2:
         Harry Potter and the Prisoner of Azkaban
         Harry Potter pelao
-LIBRARY/Shelf2 > BACK
+LIBRARY/Shelf2 > back
 LIBRARY > login
 What is your username?
  > gustavobravo20
 What is your password?
  > ******
 Successfully logged in as gustavobravo20!
-LIBRARY > DUE
+LIBRARY > due
 
   Manuel A. Baez, 812-45-7890, “Almanaque Mundial 2016”, November 6, 2017
 
@@ -46,7 +50,7 @@ LIBRARY > DUE
 ### Example #2
 
 ```
-LIBRARY > RENT "Harry Potter pelao"
+LIBRARY > rent "Harry Potter pelao"
 Please goto a shelf first to rent a book!
 LIBRARY > goto shelf 2
 LIBRARY/Shelf2 > rent "Harry Potter pelao"
