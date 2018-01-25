@@ -22,16 +22,15 @@ t_RENT = r'rent/i'
 
 reserved = {
     'goto': 'GOTO',
-    # 'then': 'THEN',
-    # 'else': 'ELSE',
-    # 'while': 'WHILE',
     'view': 'VIEW',
     'rent': 'RENT',
+    'return': 'RETURN',
     'where': 'WHERE',
     'back': 'BACK',
     'login': 'LOGIN',
-    # 'help': 'HELP',
-    # 'sort': 'SORT',
+    'logout': 'LOGOUT',
+    'help': 'HELP',
+    'sort': 'SORT',
     'due': 'DUE',
     # 'reversed': 'REVERSE',
     # 'edit': 'EDIT',
@@ -40,7 +39,8 @@ reserved = {
     # 'create': 'CREATE',
     'shelf': 'SHELF',
     'book': 'BOOK',
-    'library': 'LIBRARY'
+    'library': 'LIBRARY',
+    'exit': 'EXIT'
 }
 
 tokens = [
@@ -121,6 +121,11 @@ def p_verb(p):
          | LOGIN
          | DUE
          | BACK
+         | HELP
+         | SORT
+         | EXIT
+         | LOGOUT
+         | RETURN
     """
     p[0] = p[1].upper()
 
@@ -180,14 +185,12 @@ def run(p):
         elif p[0] == 'RENT':
             f_rent_book(p[1])
             return
-
+        elif p[0] == 'RETURN':
+            f_return_book(p[1])
+            return
         elif p[0] == 'WHERE':
             f_find_location_book(p[1])
             return
-
-        print("ERROR!")
-        return
-
     else:
         if p == 'BACK':
             current_shelf = None
@@ -198,18 +201,22 @@ def run(p):
         elif p == 'LOGIN':
             f_login()
             return
+        elif p == 'LOGOUT':
+            f_logout()
+            return
+        elif p == 'HELP':
+            f_help()
+            return
+        elif p == 'EXIT':
+            f_exit()
+            return
         elif p == 'DUE':
-            if not is_admin:
-                pass
-            else:
-                if current_shelf is None:
-                    print("Please goto a shelf first to view all rented books!")
-                    return
-                else:
-                    f_view_rented_books()
-                    return
-
-        return
+            f_due()
+            return
+        else:
+            print("Normal Error")
+    print("Execution Error")
+    return
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ VIEW ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -313,12 +320,17 @@ def f_rent_book(book_name):
         if f_is_book(book_name):
             # Validate and update Data Base
             if f_is_book_available(book_name):
+                f_add_book_to_due(book_name)
+                f_book_unavailable(book_name)
                 print("Request Accepted, please go to pick up at %s.\n Thank you." % current_library)
             else:
                 print("Book is not available")
         else:
             print("Please enter a valid book")
 
+
+def f_add_book_to_due(book_name):
+    print("Adds book to users due list")
 
 def f_is_book(book_name):
     print("Checks if book exits in shelf")
@@ -328,6 +340,37 @@ def f_is_book(book_name):
 def f_is_book_available(book_name):
     print("Checks if book can be checked out")
     return True
+
+
+def f_book_unavailable(book_name):
+    print("Removes book back to the shelf")
+
+# ~~~~~~~~~~~~~~~~~~ RETURN ~~~~~~~~~~~~~~~~~~~~ #
+
+
+def f_return_book(book_name):
+    if f_is_due():
+        if f_is_book(book_name):
+            f_remove_book_user(book_name)
+            f_book_available(book_name)
+        else:
+            print("Book doesnt exist")
+        return
+    else:
+        print("You dont have any due books")
+
+def f_is_due():
+    global current_user
+    print("Check if user owes any books")
+    return True
+
+def f_remove_book_user(book_name):
+    global current_user
+    print("Update users due books")
+
+
+def f_book_available(book_name):
+    print("Adds book back to the shelf")
 
 # ~~~~~~~~~~~~~~~~~~~~~ WHERE ~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -358,6 +401,7 @@ def f_book_in_shelf(book_name):
 def f_login():
     global current_user
     global is_admin
+
     username = input("What is your username?\n > ")
     password = input("What is your password?\n > ")
     if f_account_exists(username, password):
@@ -367,23 +411,66 @@ def f_login():
     else:
         print("None valid account")
 
+
+
+
+
 def f_account_exists(username, password):
     print("Checks if the comb of both user and pass exists")
     return True
+
 
 def f_is_admin(username):
     print("Checks if user is admin")
     return True
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~ LOGOUT ~~~~~~~~~~~~~~~~~~~ #
+
+
+def f_logout():
+    global current_user
+    global is_admin
+    current_user = None
+    is_admin = False
+
+# ~~~~~~~~~~~~~~~~~~~~ HELP ~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+
+def f_help():
+    print("Documentation")
+
+# ~~~~~~~~~~~~~~~~~~~~~~~ EXIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+
+def f_exit():
+    print("Thank you for usign Book Script! Bye!")
+    exit(0)
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~ DUE ~~~~~~~~~~~~~~~~~~~~ #
-def f_view_rented_books():
+def f_due():
+    if is_admin:
+        if current_library is None:
+            print("Please enter a library first")
+        else:
+            f_all_books_due()
+    else:
+            f_books_due()
+
+
+def f_all_books_due():
     global current_library
     if current_library is None:
         print("Please enter a library to see rented books")
     else:
         print("Query all rented books ")
 
+def f_books_due():
+    global current_user
+    print("Print all of the users due books")
 # ~~~~~~~~~~~~~~~~~ Input Handler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+
 def run_code():
     global current_shelf
     global current_library
@@ -400,5 +487,3 @@ def run_code():
         s = input(' | ' + current_user + ' / ' + current_library + '/Shelf' + str(current_shelf) + ' > ')
 
     parser.parse(s)
-    return s
-
