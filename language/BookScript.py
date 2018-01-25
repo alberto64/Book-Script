@@ -10,15 +10,6 @@ if sys.version_info[0] >= 3:
 # Token's Regex
 t_STRING = r'\"[a-zA-Z0-9\W\s]*\"'
 t_ignore = " \t"
-t_VIEW = r'view/i'
-t_GOTO = r'goto/i'
-t_SHELF = r'shelf/i'
-t_BOOK = r'book/i'
-t_LIBRARY = r'library/i'
-t_WHERE = r'where/i'
-t_DUE = r'due/i'
-t_BACK = r'back/i'
-t_RENT = r'rent/i'
 
 reserved = {
     'goto': 'GOTO',
@@ -191,9 +182,12 @@ def run(p):
         elif p[0] == 'WHERE':
             f_find_location_book(p[1])
             return
+        elif p[0] == 'SORT':
+            f_sort(p[1])
+            return
     else:
         if p == 'BACK':
-            current_shelf = None
+            f_back()
             return
         elif p == 'VIEW':
             f_view(None)
@@ -213,8 +207,12 @@ def run(p):
         elif p == 'DUE':
             f_due()
             return
+        elif p == 'SORT':
+            f_sort(None)
+            return
         else:
             print("Normal Error")
+            return
     print("Execution Error")
     return
 
@@ -397,6 +395,38 @@ def f_book_in_shelf(book_name):
     return True
 
 
+# ~~~~~~~~~~~~~~~~~ SORT ~~~~~~~~~~~~~~~~~~~#
+
+def f_sort(p):
+    if p is None or p == "Ascending":
+        f_sort_data("Ascending")
+        print("Default is ascending order by book name")
+    elif p == "Chronological":
+        f_sort_data("Chronological")
+        print("Sort books by chronological")
+    elif p == "Decending":
+        f_sort_data("Decending")
+        print("Sort books by Decending")
+    else:
+        print("Bad sort selection")
+
+
+def f_sort_data(sort_type):
+    print("Sort data base by %s " % sort_type)
+
+# ~~~~~~~~~~~~~~~ BACK ~~~~~~~~~~~~~~~~~~~~ #
+
+
+def f_back():
+    global current_library
+    global current_shelf
+    if current_library is None:
+        print("You cant go back more")
+    elif current_shelf is None:
+        current_library = None
+    else:
+        current_shelf = None
+
 # ~~~~~~~~~~~~~~~ LOGIN ~~~~~~~~~~~~~~~~~~~ #
 def f_login():
     global current_user
@@ -475,7 +505,7 @@ def run_code():
     global current_shelf
     global current_library
     global current_user
-    current_library = "Borders"
+    # current_library = "Borders"
 
     if current_user is None:
         s = "login"
