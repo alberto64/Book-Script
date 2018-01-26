@@ -1,6 +1,7 @@
 import sys
 from language.ply import lex
 from language.ply import yacc
+from dao.BookScriptDAO import BookScriptDAO
 
 # ~~~~~~~~~~~~~~~~~~~~ SCANNER ~~~~~~~~~~~~~~~~~~~~~~~~ #
 sys.path.insert(0, "../..")
@@ -160,6 +161,7 @@ current_shelf = None
 is_admin = False
 current_library = None
 current_user = None
+current_user_id = None
 
 def run(p):
     global current_library
@@ -266,6 +268,9 @@ def f_view_shelfs(s):
             print("Query for shelfs in library: %s " % s)
     else:
         print("Query for shelfs in library: %s " % current_library)
+        dao = BookScriptDAO()
+        results = dao.getAllShelves()
+        # TODO: PRINT
 
 
 def f_view_shelf_content(shelf_id):
@@ -277,6 +282,10 @@ def f_view_shelf_content(shelf_id):
     elif f_is_shelf(shelf_id):
         print("Get values")
         print("Books in Shelf %s:" % shelf_id)
+        dao = BookScriptDAO()
+        results = dao.getBooksByShelfId(shelf_id)
+        #TODO: IF NON results
+        # TODO: PRINT
     else:
         print("Please enter a valid ID")
 
@@ -284,6 +293,7 @@ def f_view_shelf_content(shelf_id):
 def f_is_shelf(shelf_id):
     print("Checks if it exits the Shelf ID")
     return type(shelf_id) == int
+    # TODO: GET SHELF BY ID
 
 # ~~~~~~~~~~~~~~~~~~  GOTO    ~~~~~~~~~~~~~~~~~~~ #
 
@@ -318,8 +328,12 @@ def f_rent_book(book_name):
         if f_is_book(book_name):
             # Validate and update Data Base
             if f_is_book_available(book_name):
-                f_add_book_to_due(book_name)
-                f_book_unavailable(book_name)
+                # f_add_book_to_due(book_name)
+                # f_book_unavailable(book_name)
+                dao = BookScriptDAO()
+                # TODO: GET current time and sum by 5
+                dao.rentAvailableBook(date, date + 5)
+
                 print("Request Accepted, please go to pick up at %s.\n Thank you." % current_library)
             else:
                 print("Book is not available")
@@ -430,29 +444,24 @@ def f_back():
 # ~~~~~~~~~~~~~~~ LOGIN ~~~~~~~~~~~~~~~~~~~ #
 def f_login():
     global current_user
+    global current_user_id
     global is_admin
 
     username = input("What is your username?\n > ")
     password = input("What is your password?\n > ")
-    if f_account_exists(username, password):
+    dao = BookScriptDAO()
+    user = dao.getUserByUsernameAndPassword(username,password)
+    # TODO: f_account_exists not necesarry (deleted)
+    if user:
         current_user = username
-        is_admin = f_is_admin(username)
+        current_user_id = user[0]
+        is_admin = user[1]
         print("Successfully logged in as %s!" % current_user)
     else:
         print("None valid account")
 
 
 
-
-
-def f_account_exists(username, password):
-    print("Checks if the comb of both user and pass exists")
-    return True
-
-
-def f_is_admin(username):
-    print("Checks if user is admin")
-    return True
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~ LOGOUT ~~~~~~~~~~~~~~~~~~~ #
 
@@ -494,10 +503,17 @@ def f_all_books_due():
         print("Please enter a library to see rented books")
     else:
         print("Query all rented books ")
+        dao = BookScriptDAO()
+        books = dao.getAllRentedBooks()
+        # TODO: Print the books
 
 def f_books_due():
     global current_user
     print("Print all of the users due books")
+    dao = BookScriptDAO()
+    books = dao.getAllRentedBooksFromUser
+    # TODO: Print the books
+
 # ~~~~~~~~~~~~~~~~~ Input Handler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 
