@@ -23,30 +23,36 @@ Rule 17    verb -> SORT
 Rule 18    verb -> EXIT
 Rule 19    verb -> LOGOUT
 Rule 20    verb -> RETURN
-Rule 21    entity -> SHELF
-Rule 22    entity -> BOOK
-Rule 23    entity -> LIBRARY
-Rule 24    variable -> VARIABLE
-Rule 25    empty -> <empty>
+Rule 21    verb -> EDIT
+Rule 22    verb -> DELETE
+Rule 23    verb -> CREATE
+Rule 24    entity -> SHELF
+Rule 25    entity -> BOOK
+Rule 26    entity -> LIBRARY
+Rule 27    variable -> VARIABLE
+Rule 28    empty -> <empty>
 
 Terminals, with rules where they appear
 
 BACK                 : 15
-BOOK                 : 22
+BOOK                 : 25
+CREATE               : 23
+DELETE               : 22
 DUE                  : 14
+EDIT                 : 21
 EXIT                 : 18
 GOTO                 : 10
 HELP                 : 16
 INTEGER              : 5
-LIBRARY              : 23
+LIBRARY              : 26
 LOGIN                : 13
 LOGOUT               : 19
 RENT                 : 12
 RETURN               : 20
-SHELF                : 21
+SHELF                : 24
 SORT                 : 17
 STRING               : 4 7
-VARIABLE             : 24
+VARIABLE             : 27
 VIEW                 : 9
 WHERE                : 11
 error                : 
@@ -73,8 +79,8 @@ state 0
     (6) statement -> . verb entity
     (7) statement -> . verb STRING
     (8) statement -> . verb
-    (24) variable -> . VARIABLE
-    (25) empty -> .
+    (27) variable -> . VARIABLE
+    (28) empty -> .
     (9) verb -> . VIEW
     (10) verb -> . GOTO
     (11) verb -> . WHERE
@@ -87,9 +93,12 @@ state 0
     (18) verb -> . EXIT
     (19) verb -> . LOGOUT
     (20) verb -> . RETURN
+    (21) verb -> . EDIT
+    (22) verb -> . DELETE
+    (23) verb -> . CREATE
 
     VARIABLE        shift and go to state 6
-    $end            reduce using rule 25 (empty -> .)
+    $end            reduce using rule 28 (empty -> .)
     VIEW            shift and go to state 7
     GOTO            shift and go to state 8
     WHERE           shift and go to state 9
@@ -102,6 +111,9 @@ state 0
     EXIT            shift and go to state 16
     LOGOUT          shift and go to state 17
     RETURN          shift and go to state 18
+    EDIT            shift and go to state 19
+    DELETE          shift and go to state 20
+    CREATE          shift and go to state 21
 
     start                          shift and go to state 1
     statement                      shift and go to state 2
@@ -143,23 +155,23 @@ state 5
     (6) statement -> verb . entity
     (7) statement -> verb . STRING
     (8) statement -> verb .
-    (21) entity -> . SHELF
-    (22) entity -> . BOOK
-    (23) entity -> . LIBRARY
+    (24) entity -> . SHELF
+    (25) entity -> . BOOK
+    (26) entity -> . LIBRARY
 
-    STRING          shift and go to state 20
+    STRING          shift and go to state 23
     $end            reduce using rule 8 (statement -> verb .)
-    SHELF           shift and go to state 21
-    BOOK            shift and go to state 22
-    LIBRARY         shift and go to state 23
+    SHELF           shift and go to state 24
+    BOOK            shift and go to state 25
+    LIBRARY         shift and go to state 26
 
-    entity                         shift and go to state 19
+    entity                         shift and go to state 22
 
 state 6
 
-    (24) variable -> VARIABLE .
+    (27) variable -> VARIABLE .
 
-    $end            reduce using rule 24 (variable -> VARIABLE .)
+    $end            reduce using rule 27 (variable -> VARIABLE .)
 
 
 state 7
@@ -296,57 +308,90 @@ state 18
 
 state 19
 
+    (21) verb -> EDIT .
+
+    STRING          reduce using rule 21 (verb -> EDIT .)
+    SHELF           reduce using rule 21 (verb -> EDIT .)
+    BOOK            reduce using rule 21 (verb -> EDIT .)
+    LIBRARY         reduce using rule 21 (verb -> EDIT .)
+    $end            reduce using rule 21 (verb -> EDIT .)
+
+
+state 20
+
+    (22) verb -> DELETE .
+
+    STRING          reduce using rule 22 (verb -> DELETE .)
+    SHELF           reduce using rule 22 (verb -> DELETE .)
+    BOOK            reduce using rule 22 (verb -> DELETE .)
+    LIBRARY         reduce using rule 22 (verb -> DELETE .)
+    $end            reduce using rule 22 (verb -> DELETE .)
+
+
+state 21
+
+    (23) verb -> CREATE .
+
+    STRING          reduce using rule 23 (verb -> CREATE .)
+    SHELF           reduce using rule 23 (verb -> CREATE .)
+    BOOK            reduce using rule 23 (verb -> CREATE .)
+    LIBRARY         reduce using rule 23 (verb -> CREATE .)
+    $end            reduce using rule 23 (verb -> CREATE .)
+
+
+state 22
+
     (4) statement -> verb entity . STRING
     (5) statement -> verb entity . INTEGER
     (6) statement -> verb entity .
 
-    STRING          shift and go to state 24
-    INTEGER         shift and go to state 25
+    STRING          shift and go to state 27
+    INTEGER         shift and go to state 28
     $end            reduce using rule 6 (statement -> verb entity .)
 
 
-state 20
+state 23
 
     (7) statement -> verb STRING .
 
     $end            reduce using rule 7 (statement -> verb STRING .)
 
 
-state 21
-
-    (21) entity -> SHELF .
-
-    STRING          reduce using rule 21 (entity -> SHELF .)
-    INTEGER         reduce using rule 21 (entity -> SHELF .)
-    $end            reduce using rule 21 (entity -> SHELF .)
-
-
-state 22
-
-    (22) entity -> BOOK .
-
-    STRING          reduce using rule 22 (entity -> BOOK .)
-    INTEGER         reduce using rule 22 (entity -> BOOK .)
-    $end            reduce using rule 22 (entity -> BOOK .)
-
-
-state 23
-
-    (23) entity -> LIBRARY .
-
-    STRING          reduce using rule 23 (entity -> LIBRARY .)
-    INTEGER         reduce using rule 23 (entity -> LIBRARY .)
-    $end            reduce using rule 23 (entity -> LIBRARY .)
-
-
 state 24
+
+    (24) entity -> SHELF .
+
+    STRING          reduce using rule 24 (entity -> SHELF .)
+    INTEGER         reduce using rule 24 (entity -> SHELF .)
+    $end            reduce using rule 24 (entity -> SHELF .)
+
+
+state 25
+
+    (25) entity -> BOOK .
+
+    STRING          reduce using rule 25 (entity -> BOOK .)
+    INTEGER         reduce using rule 25 (entity -> BOOK .)
+    $end            reduce using rule 25 (entity -> BOOK .)
+
+
+state 26
+
+    (26) entity -> LIBRARY .
+
+    STRING          reduce using rule 26 (entity -> LIBRARY .)
+    INTEGER         reduce using rule 26 (entity -> LIBRARY .)
+    $end            reduce using rule 26 (entity -> LIBRARY .)
+
+
+state 27
 
     (4) statement -> verb entity STRING .
 
     $end            reduce using rule 4 (statement -> verb entity STRING .)
 
 
-state 25
+state 28
 
     (5) statement -> verb entity INTEGER .
 

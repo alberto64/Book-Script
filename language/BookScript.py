@@ -1,4 +1,5 @@
 import sys
+from datetime import date
 from language.ply import lex
 from language.ply import yacc
 from dao.BookScriptDAO import BookScriptDAO
@@ -24,11 +25,9 @@ reserved = {
     'help': 'HELP',
     'sort': 'SORT',
     'due': 'DUE',
-    # 'reversed': 'REVERSE',
-    # 'edit': 'EDIT',
-    # 'add': 'ADD',
-    # 'delete': 'DELETE',
-    # 'create': 'CREATE',
+    'edit': 'EDIT',
+    'delete': 'DELETE',
+    'create': 'CREATE',
     'shelf': 'SHELF',
     'book': 'BOOK',
     'library': 'LIBRARY',
@@ -118,6 +117,9 @@ def p_verb(p):
          | EXIT
          | LOGOUT
          | RETURN
+         | EDIT
+         | DELETE
+         | CREATE
     """
     p[0] = p[1].upper()
 
@@ -165,7 +167,6 @@ current_user_id = None
 
 def run(p):
     global current_library
-    global current_admin
     global current_shelf
     print(p)
     if type(p) == tuple:
@@ -186,6 +187,18 @@ def run(p):
             return
         elif p[0] == 'SORT':
             f_sort(p[1])
+            return
+        elif p[0] == 'EDIT':
+            f_edit(p[1])
+            return
+        elif p[0] == 'DELETE':
+            f_delete(p[1])
+            return
+        elif p[0] == 'CREATE':
+            f_create(p[1])
+            return
+        else:
+            print("Command %s is not a valid function. Consult 'help' for more information" % p[0])
             return
     else:
         if p == 'BACK':
@@ -213,10 +226,8 @@ def run(p):
             f_sort(None)
             return
         else:
-            print("Normal Error")
+            print("Command %s is not a valid function. Consult 'help' for more information" % p)
             return
-    print("Execution Error")
-    return
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ VIEW ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -331,8 +342,10 @@ def f_rent_book(book_name):
                 # f_add_book_to_due(book_name)
                 # f_book_unavailable(book_name)
                 dao = BookScriptDAO()
-                # TODO: GET current time and sum by 5
-                dao.rentAvailableBook(date, date + 5)
+                day = date.today().timetuple()
+                # TODO: Get rest of info
+                dao.rentAvailableBook(str(day[1]) + '/' + str(day[2]) + '/' + str(day[0]),
+                                      str(day[1]) + '/' + str(day[2]+5) + '/' + str(day[0]), "", "", "")
 
                 print("Request Accepted, please go to pick up at %s.\n Thank you." % current_library)
             else:
@@ -421,6 +434,8 @@ def f_sort(p):
     elif p == "Decending":
         f_sort_data("Decending")
         print("Sort books by Decending")
+    elif p == "Genre":
+        f_sort_data("Genre")
     else:
         print("Bad sort selection")
 
@@ -476,7 +491,27 @@ def f_logout():
 
 
 def f_help():
-    print("Documentation")
+    global is_admin
+    print("<Navigation/Location Commands>\n"
+          "\tgoto <location>\t\t- It navigates to the location provided\n"
+          "\tback\t\t- Back to the previous location\n"
+          "\tview <*Shelf ID>\t\t- To see a list of the items in the current location or see those under the current "
+          "location\n"
+          "\tSort <Type>\t\t- Configure type of sorting (By: Chronological, Ascending, Descending, Genre)\n"
+          "\twhere <name>\t\t- Show the address of shelf or book given\n"
+          "\n<User Commands>\n"
+          "\tlogin\t\t- Login as user on the system\n"
+          "\tlogout\t\t- Logout as user on the system\n"
+          "\texit\t\t- A command that exits system\n"
+          "\trent <name>\t\t- To rent the book with the given name\n"
+          "\tdue\t\t- See all books the current user owes\n"
+          "\treturn\t\t- Lets user return a book that has due\n"
+          "\thelp\t\t- Show the system commands and their functions\n")
+    if is_admin:
+          print("<\nAdministrator Commands>\n"
+                "\tedit <\"Info\"|\"Loc\">\t\t-Edit a book information or location\n"
+                "\tdelete <entity>\t\t-Delete a book, shelf or library\n"
+                "\tcreate <entity>\t\t- Create a book, shelf or library\n")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~ EXIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -484,6 +519,22 @@ def f_help():
 def f_exit():
     print("Thank you for usign Book Script! Bye!")
     exit(0)
+
+# ~~~~~~~~~~~~~~~~~~~~ EDIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+def f_edit(entity):
+    print("WORK ON IT")
+
+# ~~~~~~~~~~~~~~~~~~~~ DELETE ~~~~~~~~~~~~~~~~~~~~~~~ #
+
+def f_delete(entity):
+    print("Work on it")
+
+
+# ~~~~~~~~~~~~~~~~~~~~~ CREATE ~~~~~~~~~~~~~~~~~~~~~~ #
+
+def f_create(entity):
+    print("wORK ON IT")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~ DUE ~~~~~~~~~~~~~~~~~~~~ #

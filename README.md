@@ -1,6 +1,12 @@
 # Book-Script
 A programming language for managing a system that represent a virtual library. It utilizes ply for generationg of the lexical analyzer and parser.
 
+## Requirements
+
+You need to have 
+* psycopg2 module
+* Python on system path
+
 
 ## How To run
 
