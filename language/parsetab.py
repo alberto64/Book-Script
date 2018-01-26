@@ -5,9 +5,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'VARIABLE INTEGER STRING GOTO VIEW RENT RETURN WHERE BACK LOGIN LOGOUT HELP SORT DUE EDIT DELETE CREATE SHELF BOOK LIBRARY EXIT\n    start : statement\n          | variable\n          | empty\n    \n    statement : verb entity STRING\n              | verb entity INTEGER\n              | verb entity\n              | verb STRING\n              | verb\n    \n    verb : VIEW\n         | GOTO\n         | WHERE\n         | RENT\n         | LOGIN\n         | DUE\n         | BACK\n         | HELP\n         | SORT\n         | EXIT\n         | LOGOUT\n         | RETURN\n         | EDIT\n         | DELETE\n         | CREATE\n    \n    entity : SHELF\n           | BOOK\n           | LIBRARY\n    \n    variable : VARIABLE\n    \n    empty :\n    '
+_lr_signature = 'VARIABLE INTEGER STRING GOTO VIEW RENT RETURN WHERE BACK LOGIN LOGOUT REGISTER HELP SORT DUE EDIT DELETE CREATE SHELF BOOK LIBRARY EXIT\n    start : statement\n          | variable\n          | empty\n    \n    statement : verb entity STRING\n              | verb entity INTEGER\n              | verb entity\n              | verb STRING\n              | verb\n    \n    verb : VIEW\n         | GOTO\n         | WHERE\n         | RENT\n         | LOGIN\n         | DUE\n         | BACK\n         | HELP\n         | SORT\n         | EXIT\n         | LOGOUT\n         | RETURN\n         | EDIT\n         | DELETE\n         | CREATE\n         | REGISTER\n    \n    entity : SHELF\n           | BOOK\n           | LIBRARY\n    \n    variable : VARIABLE\n    \n    empty :\n    '
     
-_lr_action_items = {'VARIABLE':([0,],[6,]),'$end':([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,],[-28,0,-1,-2,-3,-8,-27,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-6,-7,-24,-25,-26,-4,-5,]),'VIEW':([0,],[7,]),'GOTO':([0,],[8,]),'WHERE':([0,],[9,]),'RENT':([0,],[10,]),'LOGIN':([0,],[11,]),'DUE':([0,],[12,]),'BACK':([0,],[13,]),'HELP':([0,],[14,]),'SORT':([0,],[15,]),'EXIT':([0,],[16,]),'LOGOUT':([0,],[17,]),'RETURN':([0,],[18,]),'EDIT':([0,],[19,]),'DELETE':([0,],[20,]),'CREATE':([0,],[21,]),'STRING':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,24,25,26,],[23,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,27,-24,-25,-26,]),'SHELF':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,],[24,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,]),'BOOK':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,],[25,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,]),'LIBRARY':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,],[26,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,]),'INTEGER':([22,24,25,26,],[28,-24,-25,-26,]),}
+_lr_action_items = {'VARIABLE':([0,],[6,]),'$end':([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,],[-29,0,-1,-2,-3,-8,-28,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-6,-7,-25,-26,-27,-4,-5,]),'VIEW':([0,],[7,]),'GOTO':([0,],[8,]),'WHERE':([0,],[9,]),'RENT':([0,],[10,]),'LOGIN':([0,],[11,]),'DUE':([0,],[12,]),'BACK':([0,],[13,]),'HELP':([0,],[14,]),'SORT':([0,],[15,]),'EXIT':([0,],[16,]),'LOGOUT':([0,],[17,]),'RETURN':([0,],[18,]),'EDIT':([0,],[19,]),'DELETE':([0,],[20,]),'CREATE':([0,],[21,]),'REGISTER':([0,],[22,]),'STRING':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,26,27,],[24,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,28,-25,-26,-27,]),'SHELF':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,],[25,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,]),'BOOK':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,],[26,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,]),'LIBRARY':([5,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,],[27,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,]),'INTEGER':([23,25,26,27,],[29,-25,-26,-27,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'start':([0,],[1,]),'statement':([0,],[2,]),'variable':([0,],[3,]),'empty':([0,],[4,]),'verb':([0,],[5,]),'entity':([5,],[22,]),}
+_lr_goto_items = {'start':([0,],[1,]),'statement':([0,],[2,]),'variable':([0,],[3,]),'empty':([0,],[4,]),'verb':([0,],[5,]),'entity':([5,],[23,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,32 +26,33 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> start","S'",1,None,None,None),
-  ('start -> statement','start',1,'p_start','BookScript.py',80),
-  ('start -> variable','start',1,'p_start','BookScript.py',81),
-  ('start -> empty','start',1,'p_start','BookScript.py',82),
-  ('statement -> verb entity STRING','statement',3,'p_statement','BookScript.py',90),
-  ('statement -> verb entity INTEGER','statement',3,'p_statement','BookScript.py',91),
-  ('statement -> verb entity','statement',2,'p_statement','BookScript.py',92),
-  ('statement -> verb STRING','statement',2,'p_statement','BookScript.py',93),
-  ('statement -> verb','statement',1,'p_statement','BookScript.py',94),
-  ('verb -> VIEW','verb',1,'p_verb','BookScript.py',107),
-  ('verb -> GOTO','verb',1,'p_verb','BookScript.py',108),
-  ('verb -> WHERE','verb',1,'p_verb','BookScript.py',109),
-  ('verb -> RENT','verb',1,'p_verb','BookScript.py',110),
-  ('verb -> LOGIN','verb',1,'p_verb','BookScript.py',111),
-  ('verb -> DUE','verb',1,'p_verb','BookScript.py',112),
-  ('verb -> BACK','verb',1,'p_verb','BookScript.py',113),
-  ('verb -> HELP','verb',1,'p_verb','BookScript.py',114),
-  ('verb -> SORT','verb',1,'p_verb','BookScript.py',115),
-  ('verb -> EXIT','verb',1,'p_verb','BookScript.py',116),
-  ('verb -> LOGOUT','verb',1,'p_verb','BookScript.py',117),
-  ('verb -> RETURN','verb',1,'p_verb','BookScript.py',118),
-  ('verb -> EDIT','verb',1,'p_verb','BookScript.py',119),
-  ('verb -> DELETE','verb',1,'p_verb','BookScript.py',120),
-  ('verb -> CREATE','verb',1,'p_verb','BookScript.py',121),
-  ('entity -> SHELF','entity',1,'p_entity','BookScript.py',129),
-  ('entity -> BOOK','entity',1,'p_entity','BookScript.py',130),
-  ('entity -> LIBRARY','entity',1,'p_entity','BookScript.py',131),
-  ('variable -> VARIABLE','variable',1,'p_variable','BookScript.py',140),
-  ('empty -> <empty>','empty',0,'p_empty','BookScript.py',147),
+  ('start -> statement','start',1,'p_start','BookScript.py',81),
+  ('start -> variable','start',1,'p_start','BookScript.py',82),
+  ('start -> empty','start',1,'p_start','BookScript.py',83),
+  ('statement -> verb entity STRING','statement',3,'p_statement','BookScript.py',91),
+  ('statement -> verb entity INTEGER','statement',3,'p_statement','BookScript.py',92),
+  ('statement -> verb entity','statement',2,'p_statement','BookScript.py',93),
+  ('statement -> verb STRING','statement',2,'p_statement','BookScript.py',94),
+  ('statement -> verb','statement',1,'p_statement','BookScript.py',95),
+  ('verb -> VIEW','verb',1,'p_verb','BookScript.py',108),
+  ('verb -> GOTO','verb',1,'p_verb','BookScript.py',109),
+  ('verb -> WHERE','verb',1,'p_verb','BookScript.py',110),
+  ('verb -> RENT','verb',1,'p_verb','BookScript.py',111),
+  ('verb -> LOGIN','verb',1,'p_verb','BookScript.py',112),
+  ('verb -> DUE','verb',1,'p_verb','BookScript.py',113),
+  ('verb -> BACK','verb',1,'p_verb','BookScript.py',114),
+  ('verb -> HELP','verb',1,'p_verb','BookScript.py',115),
+  ('verb -> SORT','verb',1,'p_verb','BookScript.py',116),
+  ('verb -> EXIT','verb',1,'p_verb','BookScript.py',117),
+  ('verb -> LOGOUT','verb',1,'p_verb','BookScript.py',118),
+  ('verb -> RETURN','verb',1,'p_verb','BookScript.py',119),
+  ('verb -> EDIT','verb',1,'p_verb','BookScript.py',120),
+  ('verb -> DELETE','verb',1,'p_verb','BookScript.py',121),
+  ('verb -> CREATE','verb',1,'p_verb','BookScript.py',122),
+  ('verb -> REGISTER','verb',1,'p_verb','BookScript.py',123),
+  ('entity -> SHELF','entity',1,'p_entity','BookScript.py',131),
+  ('entity -> BOOK','entity',1,'p_entity','BookScript.py',132),
+  ('entity -> LIBRARY','entity',1,'p_entity','BookScript.py',133),
+  ('variable -> VARIABLE','variable',1,'p_variable','BookScript.py',142),
+  ('empty -> <empty>','empty',0,'p_empty','BookScript.py',149),
 ]
