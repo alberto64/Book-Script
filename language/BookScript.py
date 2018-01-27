@@ -13,6 +13,13 @@ if sys.version_info[0] >= 3:
 t_STRING = r'\"[a-zA-Z0-9\W\s]*\"'
 t_ignore = " \t"
 
+
+admin = {
+    'edit': 'EDIT',
+    'delete': 'DELETE',
+    'create': 'CREATE',
+}
+
 reserved = {
     'goto': 'GOTO',
     'view': 'VIEW',
@@ -26,9 +33,6 @@ reserved = {
     'help': 'HELP',
     'sort': 'SORT',
     'due': 'DUE',
-    'edit': 'EDIT',
-    'delete': 'DELETE',
-    'create': 'CREATE',
     'shelf': 'SHELF',
     'book': 'BOOK',
     'library': 'LIBRARY',
@@ -39,7 +43,7 @@ tokens = [
   'VARIABLE',
   'INTEGER',
   'STRING',
-] + list(reserved.values())
+] + list(reserved.values()) + list(admin.values()) #New here
 
 
 def t_VARIABLE(t):
@@ -168,7 +172,7 @@ current_shelf_id = None
 current_user = None
 current_user_id = None
 is_admin = False
-dao = BookScriptDAO()
+dao = None # BookScriptDAO()  #Data Bases
 
 
 def run(p):
@@ -194,15 +198,19 @@ def run(p):
         elif p[0] == 'SORT':
             f_sort(p[1])
             return
-        elif p[0] == 'EDIT':
-            f_edit(p[1])
-            return
-        elif p[0] == 'DELETE':
-            f_delete(p[1])
-            return
-        elif p[0] == 'CREATE':
-            f_create(p[1])
-            return
+        elif admin.get(str(p[0].lower())) is not None:
+            if(is_admin):
+                if p[0] == 'EDIT':
+                    f_edit(p)
+                    return
+                elif p[0] == 'DELETE':
+                    f_delete(p)
+                    return
+                elif p[0] == 'CREATE':
+                    f_create(p)
+                    return
+            else:
+                print("Permission Denied, you are not running as administration")
         elif reserved.get(str(p[0]).lower()) is None:
             print("Command %s is not a valid function. Consult 'help' for more information" % p[0])
         else:
@@ -346,10 +354,10 @@ def f_return_book(book_name):
             f_remove_book_user(book_name)
             f_book_available(book_name)
         else:
-            print("Book doesnt exist")
+            print("Book doesn't exist")
         return
     else:
-        print("You dont have any due books")
+        print("You don't have any due books")
 
 def f_is_due():
     global current_user
@@ -398,9 +406,9 @@ def f_sort(p):
     elif p == "Chronological":
         f_sort_data("Chronological")
         print("Sort books by chronological")
-    elif p == "Decending":
-        f_sort_data("Decending")
-        print("Sort books by Decending")
+    elif p == "Descending":
+        f_sort_data("Descending")
+        print("Sort books by Descending")
     elif p == "Genre":
         f_sort_data("Genre")
     else:
@@ -417,7 +425,7 @@ def f_back():
     global current_library
     global current_shelf
     if current_library is None:
-        print("You cant go back more")
+        print("You can't go back more")
     elif current_shelf is None:
         current_library = None
     else:
@@ -459,6 +467,7 @@ def f_register_user():
     global is_admin
     print("Please Enter the information for a new account!")
     fullname = input("What is your Full Name?\n > ")
+    # TODO: Validation for username, email and password
     username = input("What is your username?\n > ")
     email = input("What is your email?\n > ")
     password = input("What is your password?\n > ")
@@ -498,7 +507,7 @@ def f_help():
           "\thelp\t\t- Show the system commands and their functions\n")
     if is_admin:
           print("<Administrator Commands>\n"
-                "\tedit <\"Info\"|\"Loc\">\t\t-Edit a book information or location\n"
+                "\tedit <Info>\t\t-Edit a book information\n"
                 "\tdelete <entity>\t\t-Delete a book, shelf or library\n"
                 "\tcreate <entity>\t\t- Create a book, shelf or library\n")
 
@@ -506,13 +515,43 @@ def f_help():
 
 
 def f_exit():
-    print("Thank you for usign Book Script! Bye!")
+    print("Thank you for using Book Script! Bye!")
     exit(0)
 
 # ~~~~~~~~~~~~~~~~~~~~ EDIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-def f_edit(entity):
-    print("WORK ON IT")
+def f_edit(p):
+    #global current_shelf_id
+    global current_shelf
+    #global current_library_id
+    global current_library
+    global dao
+
+    if(current_library is not None and current_shelf is not None):
+        if len(p) == 2: #p(2): Two parameters edit <NameBook>
+            #Validate the book
+            while True:
+                s = input("Which do you want to modify: \"Name\", \"Author\", \"Genre\", \"Publisher\" or \"Publish_Date\"? or type exit to finish")
+                if s.lower() == "name":
+                    print("Edited Name")
+                elif s.lower() == "author":
+                    print("Edited Author")
+                elif s.lower() == "genre":
+                    print("Edited genre")
+                elif s.lower() == "publisher":
+                    print("Edited publisher")
+                elif s.lower() == "publish_date":
+                    print("Edited publish_date")
+                elif s.lower() == "exit":
+                    print("Book Modification done")
+                    break
+                else:
+                    print("Invalid Option, try again\n")
+        else:
+            print("Command %s is not used correct, try\n\tedit <Info>\t\t-Edit a book information\n") #Fix the sentence
+    else:
+        print("Please enter to library and/or shelf first to be able modify the book") #Editing here
+
 
 # ~~~~~~~~~~~~~~~~~~~~ DELETE ~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -566,10 +605,14 @@ def run_code():
 
     if current_user is None:
         s = input("Do you want to register an account? (Y/N)\n > ")
-        if "y" == s.lower():
-            s = "register"
-        else:
-            s = "login"
+        while True:
+            if "y" == s.lower():
+                s = "register"
+                break
+            elif "n" == s.lower():
+                s = "login"
+                break
+            s = input("Invalid input, try again (Y/N)")
     elif current_library is None:
         s = input(current_user + ' > ')
     elif current_shelf is None:
