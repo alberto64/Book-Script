@@ -1,8 +1,14 @@
 # Book-Script
 A programming language for managing a system that represent a virtual library. It utilizes ply for generationg of the lexical analyzer and parser.
 
+## Requirements 
+* Install Python 3 or above
+* Install PostgreSQL
+* Install psycopg2
 
 ## How To run
+
+Create an instance of a database in the PostgreSQL server. To create the tables following the queries specified on this document https://docs.google.com/document/d/1JXz8idehu4YHer5wXui7BkM04si_E_Fdx_jLNz75TXg/edit?usp=sharing. For every new library (Database), new bookshelfs and a new admin user has to be created manually too. 
 
 To run, you need Python 3 on your machine. Once Python 3 is installed, open a terminal instance and run the app.py file in this folder.
 
@@ -14,8 +20,6 @@ Currently this program supports the following commands:
 * back
 * where
 * due
-
-Since the application is not connected to a database, all the values that will appear will be simulated data.
 
 
 ## Example Usage
