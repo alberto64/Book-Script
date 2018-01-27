@@ -21,7 +21,7 @@ class BookScriptDAO:
     def getBookByName(self,bname):
         cursor = self.conn.cursor ()
         query = "select * from books where bname =%s;"
-        cursor.execute (query,bname,)
+        cursor.execute (query,(bname,))
         result = []
         for row in cursor:
             result.append (row)
@@ -67,11 +67,15 @@ class BookScriptDAO:
 
     def getBookByID(self, bID):
         cursor = self.conn.cursor ()
-        query = "select * from books where bid = %S AND bID NOT IN(select bID from books natural inner join booksrental where bid = %s AND isRented = 'TRUE')"
+        query = "select * from books where bid = %s AND bID NOT IN(select bID from books natural inner join booksrental where bid = %s AND isRented = 'TRUE')"
         cursor.execute (query, (bID,bID,))
-        result = []
-        for row in cursor:
-            result.append (row)
+        result = cursor.fetchone()
+        return result
+    def getBookByIDAll(self, bID):
+        cursor = self.conn.cursor ()
+        query = "select * from books where bid = %s; "
+        cursor.execute (query, (bID))
+        result = cursor.fetchone()
         return result
 
 
@@ -86,7 +90,7 @@ class BookScriptDAO:
 
     def getAllRentedBooks(self):
         cursor = self.conn.cursor ()
-        query = "select * from books where bID IN(select bID from books natural inner join booksrental where isRented = 'TRUE')"
+        query = "select * from books where bID IN(select bID from books natural inner join booksrental where booksrental.isRented = TRUE)"
         cursor.execute (query)
         result = []
         for row in cursor:
@@ -95,11 +99,18 @@ class BookScriptDAO:
 
     def getAllRentedBooksFromUser(self, uid):
         cursor = self.conn.cursor ()
-        query = "select * from books where bID IN(select bID from books natural inner join booksrental where isRented = 'TRUE' and uID = %s)"
+        query = "select * from books where bID IN(select bID from books natural inner join booksrental where booksrental.isRented = True and uID = %s)"
         cursor.execute (query, (uid,))
         result = []
         for row in cursor:
             result.append (row)
+        return result
+
+    def getRentedBookFromUserById(self, uid, book_id):
+        cursor = self.conn.cursor ()
+        query = "select bid from books where bID IN(select bID from books natural inner join booksrental where isRented = True and uID = %s and bid = %s)"
+        cursor.execute (query, (uid,book_id,))
+        result = cursor.fetchone()
         return result
 
     def rentAvailableBook(self, date_rental, return_date, isrented, bid, uid):
@@ -143,15 +154,17 @@ class BookScriptDAO:
 
     def createNewUser(self,username,password,address,phone,email,isadmin):
         cursor = self.conn.cursor ()
-        uid = BookScriptDAO.getMaxUserID (self) +1
-        query = "insert into users(uid,username,password,address,phone,email,isadmin) values (%s, %s, %s, %s, %s, %s, %s) ;"
-        cursor.execute (query, (uid,username,password,address,phone,email,isadmin,))
+        query = "insert into users(username,password,address,phone,email,isadmin) values (%s, %s, %s, %s, %s, %s) returning uid;"
+        cursor.execute (query, (username,password,address,phone,email,isadmin,))
+        uid = cursor.fetchone()
+        self.conn.commit()
         return uid
 
     def changeBookAvailability(self, bid, isrented):
         cursor = self.conn.cursor ()
-        query = "update bookrental set isrented = %s where bid = %s;"
-        cursor.execute (query, (bid,isrented,))
+        query = "update booksrental set isrented = %s where bid = %s;"
+        cursor.execute (query, (isrented,bid,))
+        self.conn.commit
         return bid
 
     def getMaxBookID(self):
