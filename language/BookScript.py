@@ -13,11 +13,17 @@ if sys.version_info[0] >= 3:
 t_STRING = r'\"[a-zA-Z0-9\W\s]*\"'
 t_ignore = " \t"
 
+admin = {
+    'edit': 'EDIT',
+    'delete': 'DELETE',
+    'create': 'CREATE',
+    'return': 'RETURN'
+}
+
 reserved = {
     'goto': 'GOTO',
     'view': 'VIEW',
     'rent': 'RENT',
-    'return': 'RETURN',
     'where': 'WHERE',
     'back': 'BACK',
     'login': 'LOGIN',
@@ -26,9 +32,6 @@ reserved = {
     'help': 'HELP',
     'sort': 'SORT',
     'due': 'DUE',
-    'edit': 'EDIT',
-    'delete': 'DELETE',
-    'create': 'CREATE',
     'shelf': 'SHELF',
     'book': 'BOOK',
     'library': 'LIBRARY',
@@ -39,7 +42,7 @@ tokens = [
   'VARIABLE',
   'INTEGER',
   'STRING',
-] + list(reserved.values())
+] + list(reserved.values()) + list(admin.values())
 
 
 def t_VARIABLE(t):
@@ -186,24 +189,28 @@ def run(p):
         elif p[0] == 'RENT':
             f_rent_book(p[1])
             return
-        elif p[0] == 'RETURN':
-            f_return_book(p[1])
-            return
         elif p[0] == 'WHERE':
             f_find_location_book(p[1])
             return
         elif p[0] == 'SORT':
             f_sort(p[1])
             return
-        elif p[0] == 'EDIT':
-            f_edit(p[1])
-            return
-        elif p[0] == 'DELETE':
-            f_delete(p[1])
-            return
-        elif p[0] == 'CREATE':
-            f_create(p[1])
-            return
+        elif (admin.get(str(p[0]).lower()) is not None):
+            if(is_admin):
+                if p[0] == 'EDIT':
+                    f_edit(p)
+                    return
+            elif p[0] == 'DELETE':
+                    f_delete(p)
+                    return
+            elif p[0] == 'CREATE':
+                    f_create(p)
+                    return
+            elif p[0] == 'RETURN':
+                f_return_book(p)
+                return
+            else:
+                print("Permission Denied, this is only administration commands")
         elif reserved.get(str(p[0]).lower()) is None:
             print("Command %s is not a valid function. Consult 'help' for more information" % p[0])
         else:
@@ -390,7 +397,6 @@ def f_find_location_book(book_name):
         f_book_location(book_name)
     elif f_book_in_shelf(book_name):
         print("True")
-        dao.
     else:
         print("False")
 
@@ -511,13 +517,13 @@ def f_help():
           "\texit\t\t- A command that exits system\n"
           "\trent <name>\t\t- To rent the book with the given name\n"
           "\tdue\t\t- See all books the current user owes\n"
-          "\treturn\t\t- Lets user return a book that has due\n"
           "\thelp\t\t- Show the system commands and their functions\n")
     if is_admin:
           print("<Administrator Commands>\n"
                 "\tedit <\"Info\"|\"Loc\">\t\t-Edit a book information or location\n"
-                "\tdelete <entity>\t\t-Delete a book, shelf or library\n"
-                "\tcreate <entity>\t\t- Create a book, shelf or library\n")
+                "\tdelete <entity>\t\t- Delete a book or shelf\n"
+                "\tcreate <entity>\t\t- Create a book or shelf\n"
+                "\treturn\t\t- Lets user return a book that has due\n")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~ EXIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -528,18 +534,186 @@ def f_exit():
 
 # ~~~~~~~~~~~~~~~~~~~~ EDIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
-def f_edit(entity):
-    print("Demo")
+def f_edit(p):
+    global current_shelf
+    global current_library
+    global dao
+
+    if(current_library is not None and current_shelf is not None):
+        if len(p) == 2: #p(2): Two parameters edit <NameBook>
+            #Validate the book
+            book = 1  # TODO: dao.getBookbyName(book_name)
+            if book is None:
+                print("Bad book name")
+            else:
+                while True:
+                    s = input("Which do you want to modify: \"Name\", \"Author\", \"Genre\", \"Publisher\" or \"Publish_Date\"? or type exit to leave")
+                    if s.lower() == "name":
+                        while True:
+                            s = input("Write new name: ")
+                            if (s is not None):
+                                book[3] = s
+                                print("Name book modified")
+                                break
+                            else:
+                                print("Please write new name")
+                    elif s.lower() == "author":
+                        while True:
+                            s = input("Write new author: ")
+                            if (s is not None):
+                                book[5] = s
+                                print("Author modified")
+                                break
+                            else:
+                                print("Please write new author")
+                    elif s.lower() == "genre":
+                        while True:
+                            s = input("Write new genre: ")
+                            if (s is not None):
+                                book[4] = s
+                                print("Genre modified")
+                                break
+                            else:
+                                print("Please write new genre")
+                    elif s.lower() == "publisher":
+                        while True:
+                            s = input("Write new publisher: ")
+                            if (s is not None):
+                                book[6] = s
+                                print("Publisher modified")
+                                break
+                            else:
+                                print("Please write new publisher")
+                    elif s.lower() == "publish_date":
+                        while True:
+                            s = input("Write new publish date: ")
+                            if (s is not None):
+                                book[7] = s
+                                print("Publish date modified")
+                                break
+                            else:
+                                print("Please write new publish date")
+                    elif s.lower() == "exit":
+                        print("Book Modification is done")
+                        break
+                    else:
+                        print("Invalid options, try again")
+        else:
+            print("Command %s is not used correct, try\n\tedit <Info>\t\t-Edit a book information",p[0]) #Fix the sentence
+    else:
+        print("Please enter to library and/or shelf first to be able modify the book") #Editing here
+
+
 # ~~~~~~~~~~~~~~~~~~~~ DELETE ~~~~~~~~~~~~~~~~~~~~~~~ #
 
-def f_delete(entity):
-    print("Work on it")
+def f_delete(p):
+    global current_shelf
+    global current_library
+    global dao
+
+    if (current_library is not None and current_shelf is not None): #This is book
+        if len(p) == 2:  # p(2): Two parameters edit <NameBook>
+                while True:
+                    s = input("Write the name of book you want to be delete or type exit to leave:")
+                    if (s.lower() == "exit"):
+                        break
+                    # Validate the book
+                    book = 1  # TODO: dao.getBookbyName(book_name)
+                    if book is None:
+                        print("Bad book name")
+                    else:
+                        print("")
+                        # TODO: dao.deleteBook(book_id)
+        else:
+            print("Command %s is not used correct, try\n\tdelete <entity>\t\t- Delete a book\n",p[0])  # Fix the sentence
+    elif(current_library is not None and current_shelf is None):
+        if len(p) == 2:  # p(2): Two parameters edit <NameBook>
+            while True:
+                s = input("Write the name of shelf you want to be delete or type exit to leave:")
+                if(s.lower() == "exit"):
+                    break
+                # Validate the book
+                book = 1  # TODO: dao.getShelfbyName(shelf_name)
+                if book is None:
+                    print("Bad shelf name")
+                else:
+                    print("%s shelf is deleted",p[1])
+                    # TODO: dao.deleteShelf(shelf_id)
+        else:
+            print("Command %s is not used correct, try\n\tdelete <entity>\t\t- Delete a book or shelf\n", p[0])  # Fix the sentence
+    else:
+        print("Please enter to library and/or shelf first for able delete the book or shelf")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~ CREATE ~~~~~~~~~~~~~~~~~~~~~~ #
 
-def f_create(entity):
-    print("wORK ON IT")
+def f_create(p):
+    global current_shelf
+    global current_library
+    global dao
+
+    if (current_library is not None and current_shelf is not None):  # This is book
+        if len(p) == 2:  # p(2): Two parameters edit <NameBook>
+            while True:
+                s = input("Write the name of book you want to be create or type exit to leave:")
+                if (s.lower() == "exit"):
+                    break
+                # Validate the book
+                book = 1  # TODO: dao.getBookbyName(book_name)
+                if book is not None:
+                    print("Book name already exist, please pick another new name")
+                else:
+                    book = 1 # TODO: dao.addNewBook(book_name)
+                    while True:
+                        s = input("Which type genre is? ")
+                        if (s is not None):
+                            book[4] = s
+                            break
+                        else:
+                            print("Please write which type genre is?")
+                    while True:
+                        s = input("Who is the author? ")
+                        if (s is not None):
+                            book[5] = s
+                            break
+                        else:
+                            print("Please write who is author?")
+                    while True:
+                        s = input("What is the publisher name? ")
+                        if (s is not None):
+                            book[6] = s
+                            break
+                        else:
+                            print("Please write what is the publisher name? ")
+                    while True:
+                        s = input("When the publish date is?")
+                        if (s is not None):
+                            book[7] = s
+                            break
+                        else:
+                            print("Please write when the publish date is? ")
+                    print("%s book is created",p[1])
+        else:
+            print("Command %s is not used correct, try\n\tcreate <entity>\t\t- Create a book or shelf\n",
+                  p[0])  # Fix the sentence
+    elif (current_library is not None and current_shelf is None):
+        if len(p) == 2:  # p(2): Two parameters edit <NameBook>
+            while True:
+                s = input("Write the name of shelf you want to be create or type exit to leave:")
+                if (s.lower() == "exit"):
+                    break
+                # Validate the book
+                shelf = 1  # TODO: dao.getShelfbyName(book_name)
+                if shelf is not None:
+                    print("Shelf name already exist, please pick another new name")
+                else:
+                    shelf = 1 # TODO: dao.addShelfBook(book_name)
+                    print("%s shelf is created",p[1])
+        else:
+            print("Command %s is not used correct, try\n\tcreate <entity>\t\t- Create a book or shelf\n",
+                  p[0])  # Fix the sentence
+    else:
+        print("Please enter to library and/or shelf first for able create the book or shelf")
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~ DUE ~~~~~~~~~~~~~~~~~~~~ #
