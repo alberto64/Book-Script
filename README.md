@@ -6,6 +6,7 @@ A programming language for managing a system that represent a virtual library. I
 You need to have 
 * psycopg2 module
 * Python on system path
+* Postgres SQL
 
 
 ## How To run
