@@ -336,7 +336,7 @@ def f_rent_book(book_name):
     if current_shelf is None:
         print("Please go to a shelf first to rent a book!")
     else:
-         book = dao.getBookByNameAndShelfId(book_name, current_shelf_id)
+        book = dao.getBookByNameAndShelfId(book_name, current_shelf_id)
         if book is None:
             print("Book given is not valid")
         else:
@@ -439,11 +439,12 @@ def f_login():
     global current_user
     global current_user_id
     global is_admin
+    global dao
 
     username = input("What is your username?\n > ")
     password = input("What is your password?\n > ")
     # dao = BookScriptDAO()
-    user = [1, True] # dao.getUserByUsernameAndPassword(username,password)
+    user = dao.getUserByUsernameAndPassword(username,password)
     if user is not None:
         current_user = username
         current_user_id = user[0]
