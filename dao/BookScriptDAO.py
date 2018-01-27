@@ -29,7 +29,7 @@ class BookScriptDAO:
 
     def getBookByNameAndShelfId(self,bname, shelf_id):
         cursor = self.conn.cursor ()
-        query = "select * from books where bname =%s and shelfID=%s;"
+        query = "select bid from books natural inner join booksrental where bname =%s and shelfID=%s and isrented = 'FALSE' union (select bid from books where bid not in ( select bid from booksrental ));"
         cursor.execute (query,(bname,shelf_id,))
         result = cursor.fetchone()
         return result
@@ -52,7 +52,7 @@ class BookScriptDAO:
 
     def getBooksByShelfId(self, shelf_id):
         cursor = self.conn.cursor ()
-        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from books where shelfID =%s;"
+        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from books natural inner join booksrental where shelfID =%s and isRented='FALSE';"
         cursor.execute (query, (shelf_id,))
         result = []
         for row in cursor:
@@ -104,10 +104,9 @@ class BookScriptDAO:
 
     def rentAvailableBook(self, date_rental, return_date, isrented, bid, uid):
         cursor = self.conn.cursor ()
-        rid = BookScriptDAO.getMaxBookRentalID (self) + 1
-        query = "insert into booksrental(rid,date_rental,return_date,isrented,bid,uid) values (%s, %s, %s, %s, %s, %s);"
-        cursor.execute (query, (rid, date_rental, return_date, isrented, bid, uid,))
-        return rid
+        query = "insert into booksrental(date_rental,return_date,isrented,bid,uid) values ( %s, %s, %s, %s, %s);"
+        cursor.execute (query, (date_rental, return_date, isrented, bid, uid,))
+        self.conn.commit()
 
     def getAllUsers(self):
         cursor = self.conn.cursor ()
