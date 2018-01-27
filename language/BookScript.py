@@ -168,7 +168,7 @@ current_shelf_id = None
 current_user = None
 current_user_id = None
 is_admin = False
-dao = BookScriptDAO()
+dao = None # BookScriptDAO()
 
 
 def run(p):
@@ -260,7 +260,7 @@ def f_view(p):
             # TODO: dao.getAllShelfInLib(current_library_id)
         else:
             print("")
-            dao.getBooksByShelfId(current_shelf_id)
+            # TODO: dao.getBooksByShelfId(current_shelf_id)
     elif len(p) == 3:
         if p[1] == 'SHELF':
             if current_library is None:
@@ -315,54 +315,51 @@ def f_goto(p):
 
 def f_rent_book(book_name):
     global dao
+    global current_library_id
+    global current_shelf_id
+    global current_user_id
+
     if current_shelf is None:
         print("Please go to a shelf first to rent a book!")
     else:
-        dao.get
-        # TODO:
-        if f_is_book(book_name):
-            # Validate and update Data Base
-            if f_is_book_available(book_name):
-                # f_add_book_to_due(book_name)
-                # f_book_unavailable(book_name)
-                dao = BookScriptDAO()
-                day = date.today().timetuple()
-                # TODO: Get rest of info
-                dao.rentAvailableBook(str(day[1]) + '/' + str(day[2]) + '/' + str(day[0]),
-                                      str(day[1]) + '/' + str(day[2]+5) + '/' + str(day[0]), "", "", "")
-
-                print("Request Accepted, please go to pick up at %s.\n Thank you." % current_library)
-            else:
-                print("Book is not available")
+        book = 1 # TODO: dao.getBookByName(book_name, current_shelf_id, current_library_id)
+        if book is None:
+            print("Book given is not valid")
         else:
-            print("Please enter a valid book")
+            day = date.today().timetuple()
+            while True:
+                days_rent = input("For how many days do you wish to rent the book?\n > ")
+                try:
+                    days_rent = int(days_rent)
+                    if days_rent > 60 or days_rent <= 0:
+                        print("You can only rent a book between 1 to 60 days")
+                    else:
+                        break
+                except ValueError:
+                    print("That is not a number!")
+            today = str(day[1]) + '/' + str(day[2]) + '/' + str(day[0])
+            due_day = str(day[1]) + '/' + str(day[2] + days_rent) + '/' + str(day[0])
+            # TODO: dao.rentAvailableBook(today, due_day, True, book, current_user_id)
+
+            print("Request Accepted, please go to pick up at %s.\n Thank you." % current_library)
+            print("This book will be due for the day %s." % due_day)
 
 
 # ~~~~~~~~~~~~~~~~~~ RETURN ~~~~~~~~~~~~~~~~~~~~ #
 
 def f_return_book(book_name):
-    if f_is_due():
-        if f_is_book(book_name):
-            f_remove_book_user(book_name)
-            f_book_available(book_name)
-        else:
-            print("Book doesnt exist")
-        return
+    global dao
+    global current_user_id
+    books = list # TODO: dao.getUserDueBooks(current_user_id)
+    if books is None:
+        print("You dont owe books")
     else:
-        print("You dont have any due books")
-
-def f_is_due():
-    global current_user
-    print("Check if user owes any books")
-    return True
-
-def f_remove_book_user(book_name):
-    global current_user
-    print("Update users due books")
-
-
-def f_book_available(book_name):
-    print("Adds book back to the shelf")
+        book = 1 # TODO: dao.getBookbyName(book_name)
+        if book is None:
+            print("Bad book name")
+        else:
+            print("")
+            # TODO: dao.editUserDueBooks(False, book, current_user_id)
 
 # ~~~~~~~~~~~~~~~~~~~~~ WHERE ~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -453,6 +450,8 @@ def f_logout():
     is_admin = False
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~ REGISTER ~~~~~~~~~~~~~~~~~~ #
+
 def f_register_user():
     global current_user
     global current_user_id
@@ -512,8 +511,7 @@ def f_exit():
 # ~~~~~~~~~~~~~~~~~~~~ EDIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 def f_edit(entity):
-    print("WORK ON IT")
-
+    print("Demo")
 # ~~~~~~~~~~~~~~~~~~~~ DELETE ~~~~~~~~~~~~~~~~~~~~~~~ #
 
 def f_delete(entity):
