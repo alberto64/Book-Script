@@ -29,14 +29,14 @@ reserved = {
     'logout': 'LOGOUT', # Good
     'register': 'REGISTER', # Good
     'help': 'HELP', # Good
-    'due': 'DUE', # FIX Doesnt show anything
+    'due': 'DUE', # Good
     'shelf': 'SHELF', # Good
     'book': 'BOOK', # Good
     'library': 'LIBRARY', # Good
     'exit': 'EXIT', # Good
-    'delete': 'DELETE', # Unchecked
+    'delete': 'DELETE', # Good
     'create': 'CREATE', # Good
-    'return': 'RETURN' # FIX Crashes with wrong inputs
+    'return': 'RETURN' # Good
 }
 
 tokens = [
@@ -220,10 +220,10 @@ def run(p):
         elif p == 'RETURN':
             f_return_book()
             return
-        elif is_admin and p[0] == str("DELETE"):
+        elif is_admin and p == str("DELETE"):
             f_delete(p)
             return
-        elif is_admin and p[0] == 'CREATE':
+        elif is_admin and p == 'CREATE':
             f_create(p)
             return
         elif reserved.get(str(p).lower()) is None:
@@ -259,7 +259,7 @@ def f_view(p):
             for book in results:
                 bookinfo = ""
                 for args in book:
-                  bookinfo+= str(args) + " "
+                  bookinfo+= str(args) + "|"
                 print(bookinfo)
             print('---------------------')
     else:
@@ -310,8 +310,8 @@ def f_rent_book(book_name):
     if current_shelf_id is None:
         print("Please go to a shelf first to rent a book!")
     else:
-        book = dao.getBookByNameAndShelfId(book_name, current_shelf_id)
-        if book is None:
+        book = dao.getBookByNameAndShelfId(book_name.replace("\"", ""), current_shelf_id)
+        if not book:
             print("Book given is not valid")
         else:
             day = date.today().timetuple()
@@ -479,13 +479,13 @@ def f_help():
           "\texit\t\t- A command that exits system\n"
           "\trent <name>\t\t- To rent the book with the given name\n"
           "\tdue\t\t- See all books the current user owes\n"
-          "\thelp\t\t- Show the system commands and their functions\n")
+          "\thelp\t\t- Show the system commands and their functions\n"
+          "\treturn\t\t- Lets user return a book that has due\n")
     if is_admin:
           print("<Administrator Commands>\n"
                 "\tdue\t\t- See all books currently owed\n"
                 "\tdelete\t\t- Delete a book\n"
-                "\tcreate\t\t- Create a book\n"
-                "\treturn\t\t- Lets user return a book that has due\n")
+                "\tcreate\t\t- Create a book\n")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~ EXIT ~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -633,11 +633,11 @@ def f_due():
     if due_books is None:
         print("No books are due!")
     else:
-        print("Books currently due:")
+        print("Books currently due:\n")
         for entry in due_books:
             line = ""
             for fields in entry:
-                line += str(fields) + " "
+                line += str(fields) + "|"
             print(line)
     print("------------------------------------------")
 

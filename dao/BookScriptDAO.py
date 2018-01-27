@@ -29,8 +29,8 @@ class BookScriptDAO:
 
     def getBookByNameAndShelfId(self,bname, shelf_id):
         cursor = self.conn.cursor ()
-        query = "select bid from books natural inner join booksrental where bname =%s and shelfID=%s and isrented = 'FALSE' union (select bid from books where bid not in ( select bid from booksrental ));"
-        cursor.execute (query,(bname,shelf_id,))
+        query = "select bid from books natural inner join booksrental where bname =%s and shelfID=%s and isrented = FALSE union (select bid from books where bid not in ( select bid from booksrental ) and bname =%s and shelfID=%s);"
+        cursor.execute (query,(bname,shelf_id,bname,shelf_id,))
         result = cursor.fetchone()
         return result
 
@@ -52,8 +52,8 @@ class BookScriptDAO:
 
     def getBooksByShelfId(self, shelf_id):
         cursor = self.conn.cursor ()
-        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from books natural inner join booksrental where shelfID =%s and isRented='FALSE';"
-        cursor.execute (query, (shelf_id,))
+        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from books natural inner join booksrental where shelfID =%s and isRented='FALSE'  union (select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from books where shelfID=%s and bid not in ( select bid from booksrental ));"
+        cursor.execute (query, (shelf_id,shelf_id,))
         result = []
         for row in cursor:
             result.append (row)
