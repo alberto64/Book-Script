@@ -153,6 +153,12 @@ class BookScriptDAO:
         cursor.execute (query, (bid,isrented,))
         return bid
 
+    def updateBookInfo(self, bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate):
+        cursor = self.conn.cursor ()
+        query = "update bookrental set isbn = %s,shelfid = %s,bname = %s,bgenre = %s,bauthor = %s,bpublisher = %s,bpublishdate = %s where bid = %s;"
+        cursor.execute (query, (isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate, bid,))
+        return bid
+
     def getMaxBookID(self):
         cursor = self.conn.cursor()
         query = "select max(bid) from books;"
