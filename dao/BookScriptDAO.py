@@ -27,6 +27,13 @@ class BookScriptDAO:
             result.append (row)
         return result
 
+    def getBookByNameAndShelfId(self,bname, shelf_id):
+        cursor = self.conn.cursor ()
+        query = "select * from books where bname =%s and shelfID=%s;"
+        cursor.execute (query,(bname,shelf_id,))
+        result = cursor.fetchone()
+        return result
+
     def getAllShelves(self):
         cursor = self.conn.cursor ()
         query = "select distinct shelfID from books;"

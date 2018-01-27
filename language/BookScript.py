@@ -336,7 +336,7 @@ def f_rent_book(book_name):
     if current_shelf is None:
         print("Please go to a shelf first to rent a book!")
     else:
-         # TODO:book = dao.getBookByName(book_name)
+         book = dao.getBookByNameAndShelfId(book_name, current_shelf_id)
         if book is None:
             print("Book given is not valid")
         else:
@@ -353,7 +353,7 @@ def f_rent_book(book_name):
                     print("That is not a number!")
             today = str(day[1]) + '/' + str(day[2]) + '/' + str(day[0])
             due_day = str(day[1]) + '/' + str(day[2] + days_rent) + '/' + str(day[0])
-            # TODO: dao.rentAvailableBook(today, due_day, True, book, current_user_id)
+            dao.rentAvailableBook(today, due_day, True, book[0], current_user_id)
 
             print("Request Accepted, please go to pick up at %s.\n Thank you." % current_library)
             print("This book will be due for the day %s." % due_day)
