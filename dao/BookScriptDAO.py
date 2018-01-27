@@ -36,9 +36,16 @@ class BookScriptDAO:
             result.append (row)
         return result
 
+    def getShelfById(self, shelf_id):
+        cursor = self.conn.cursor ()
+        query = "select distinct shelfID from books where shelfID = %s;"
+        cursor.execute (query, (shelf_id,))
+        result = cursor.fetchone()
+        return result
+
     def getBooksByShelfId(self, shelf_id):
         cursor = self.conn.cursor ()
-        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from book where shelfID =%s;"
+        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from books where shelfID =%s;"
         cursor.execute (query, (shelf_id,))
         result = []
         for row in cursor:

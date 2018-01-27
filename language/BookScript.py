@@ -270,34 +270,23 @@ def f_view(p):
 
         elif current_shelf is None:
             print("")
-            # TODO: results = dao.getAllShelfInLib(current_library_id)
+            results = dao.getAllShelves()
             print("Available Shelves:\n")
             for shelf in results:
-                print("\t" + shelf)
+                print("\t" + str(shelf[0]))
             print('---------------------')
         else:
-            # TODO: results = dao.getBooksByShelfId(current_shelf_id)
+            results = dao.getBooksByShelfId(current_shelf_id)
             print("Available Shelves:\n")
             for book in results:
                 bookinfo = ""
                 for args in book:
-                  bookinfo+= args + " "
+                  bookinfo+= str(args) + " "
                 print(bookinfo)
             print('---------------------')
 
 
-    # elif len(p) == 3:
-    #     if p[1] == 'SHELF':
-    #         if current_library is None:
-    #             print("Please enter a library first")
-    #         else:
-    #             print("")
-    #             # TODO: dao.getBooksInShelf(str(p[2]).replace("\""", ""), current_library_id)
-    #     elif p[1] == 'LIBRARY':
-    #         print("")
-    #         # TODO: dao.getShelfsInLibrary(p[2].replace("\""", ""))
-    #     else:
-    #         print("Invalid parameters for view method")
+
     else:
         print("Error in view method")
 
@@ -324,12 +313,12 @@ def f_goto(p):
             if current_library is None:
                 print("Please enter a library first!")
             else:
-                shelf = 1  # TODO: dao.getShelfByName(p[2].replace("\"", ""))
+                shelf = dao.getShelfById(p[2])
                 if shelf is None:
                     print("Bad shelf name")
                 else:
                     current_shelf_id = shelf
-                    current_shelf = p[2].replace("\"", "")
+                    current_shelf = p[2]
         else:
             print("Wrong entity only library or shelf permitted!")
     else:
