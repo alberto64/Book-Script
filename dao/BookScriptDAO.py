@@ -101,13 +101,20 @@ class BookScriptDAO:
             result.append (row)
         return result
 
-    def getUserByID(self, uID):
+    def getUserByID(self, uid):
         cursor = self.conn.cursor ()
         query = "select * from users where uid = %s;"
-        cursor.execute (query, (uID,))
+        cursor.execute (query, (uid,))
         result = []
         for row in cursor:
             result.append (row)
+        return result
+
+    def getUserIDByUserName(self, username):
+        cursor = self.conn.cursor ()
+        query = "select uid from users where username = %s;"
+        cursor.execute (query, (username,))
+        result = cursor.fetchone ()
         return result
 
     def createNewBook(self,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate):
