@@ -136,8 +136,9 @@ class BookScriptDAO:
     def createNewBook(self,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate):
         cursor = self.conn.cursor ()
         bid = BookScriptDAO.getMaxBookID (self) +1
-        query = "insert into books(bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate) values (%s, %s, %s, %s, %s, %s, %s, %s) ;"
+        query = "insert into books(bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate) values (%s, %s, %s, %s, %s, %s, %s, %s) returning bid;"
         cursor.execute (query, (bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate,))
+        self.conn.commit()
         return bid
 
     def createNewUser(self,username,password,address,phone,email,isadmin):

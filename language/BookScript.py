@@ -200,15 +200,15 @@ def run(p):
                 if p[0] == 'EDIT':
                     f_edit(p)
                     return
-            elif p[0] == 'DELETE':
-                    f_delete(p)
+                elif p[0] == 'DELETE':
+                        f_delete(p)
+                        return
+                elif p[0] == 'CREATE':
+                        f_create(p)
+                        return
+                elif p[0] == 'RETURN':
+                    f_return_book(p)
                     return
-            elif p[0] == 'CREATE':
-                    f_create(p)
-                    return
-            elif p[0] == 'RETURN':
-                f_return_book(p)
-                return
             else:
                 print("Permission Denied, this is only administration commands")
         elif reserved.get(str(p[0]).lower()) is None:
@@ -648,41 +648,54 @@ def f_create(p):
                 s = input("Write the name of book you want to be create or type exit to leave:")
                 if (s.lower() == "exit"):
                     break
-                # Validate the book
-                book = 1  # TODO: dao.getBookbyName(book_name)
-                if book is not None:
-                    print("Book name already exist, please pick another new name")
                 else:
-                    book = 1 # TODO: dao.addNewBook(book_name)
+                    book = {}
+
+                    while True:
+                        s = input("Please write the name of the book")
+                        if (s is not None):
+                            book['bname'] = s
+                            break
+                        else:
+                            print("Please write the name of the book")
                     while True:
                         s = input("Which type genre is? ")
                         if (s is not None):
-                            book[4] = s
+                            book['genre'] = s
                             break
                         else:
                             print("Please write which type genre is?")
                     while True:
+                        s = input("Please write the ISBN")
+                        if (s is not None):
+                            book['isbn'] = s
+                            break
+                        else:
+                            print("Please write the ISBN")
+                    while True:
                         s = input("Who is the author? ")
                         if (s is not None):
-                            book[5] = s
+                            book['author'] = s
                             break
                         else:
                             print("Please write who is author?")
                     while True:
                         s = input("What is the publisher name? ")
                         if (s is not None):
-                            book[6] = s
+                            book['publisher'] = s
                             break
                         else:
                             print("Please write what is the publisher name? ")
                     while True:
-                        s = input("When the publish date is?")
+                        s = input("When the publish date is? (ex. YYYY/MM/DD)")
                         if (s is not None):
-                            book[7] = s
+                            book['date'] = s
                             break
                         else:
                             print("Please write when the publish date is? ")
-                    print("%s book is created",p[1])
+
+                    bid=dao.createNewBook(book['isbn'], current_shelf, book['bname'], book['genre'], book['author'], book['publisher'], book['date'])
+                    print("%s book is created",bid)
         else:
             print("Command %s is not used correct, try\n\tcreate <entity>\t\t- Create a book or shelf\n",
                   p[0])  # Fix the sentence
