@@ -14,12 +14,23 @@ To run, you need Python 3 on your machine. Once Python 3 is installed, open a te
 
 Currently this program supports the following commands:
 
-* goto
-* login
-* view
-* back
-* where
-* due
+<Navigation/Location Commands>
+ * goto <library|shelf> <Name> - It navigates to the location provided
+ * back - Back to the previous location
+ * view - To see a list of the items in the current location
+ * where <name> - Show the address of shelf or book given\n"
+<User Commands>
+ * login - Login as user on the system
+ * logout - Logout as user on the system
+ * exit - A command that exits system
+ * rent <name> - To rent the book with the given name
+ * due - See all books the current user owes
+ * help - Show the system commands and their functions
+<Administrator Commands>
+ * due - See all books that are due in the system		
+ * delete - Delete a book
+ * create - Create a book
+ * return <book_id> - Lets user return a book that has due
 
 
 ## Example Usage
