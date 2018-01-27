@@ -75,6 +75,7 @@ Thank you for usign Book Script! Bye!
 Welcome to Book Script!!!! 
 “A library at the run of a program”
 Do you want to register an account? (Y/N) or EXIT
+> N
 What is your username? 
  > albert
 What is your password?
