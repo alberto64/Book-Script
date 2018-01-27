@@ -187,3 +187,17 @@ class BookScriptDAO:
         cursor.execute (query, (username,password,))
         result = cursor.fetchone()
         return result
+
+    def getPasswordByUsername(self, username):
+        cursor = self.conn.cursor ()
+        query = "select password from users where username = %s;"
+        cursor.execute (query, (username,))
+        result = cursor.fetchone()
+        return result
+
+    def getUsernameIsAdmin(self, username):
+        cursor = self.conn.cursor ()
+        query = "select isAdmin from users where username = %s;"
+        cursor.execute (query, (username,))
+        result = cursor.fetchone()
+        return result[0]
