@@ -162,12 +162,11 @@ parser = yacc.yacc()
 # ~~~~~~~~~~~~~~~~~ CODE EXECUTIONER ~~~~~~~~~~~~~~~~~~~~~ #
 # System Variables
 current_library = None
-current_library_id = None
-current_shelf = None
 current_shelf_id = None
 current_user = None
 current_user_id = None
 is_admin = False
+libraries = []
 dao = None # BookScriptDAO()
 
 
@@ -176,10 +175,10 @@ def run(p):
     global current_shelf
     print(p)
     if type(p) == tuple:
-        if p[0] == 'VIEW':
-            f_view(p)
-            return
-        elif p[0] == 'GOTO':
+        # if p[0] == 'VIEW':
+        #    f_view(p)
+        #    return
+        if p[0] == 'GOTO':
             f_goto(p)
             return
         elif p[0] == 'RENT':
@@ -247,9 +246,8 @@ def run(p):
 
 def f_view(p):
     global current_shelf
-    global current_shelf_id
     global current_library
-    global current_library_id
+    global current_shelf_id
     global dao
     if p is None:
         if current_library is None:
@@ -257,10 +255,13 @@ def f_view(p):
             # TODO: dao.getAllLibraries()
         elif current_shelf is None:
             print("")
-            # TODO: dao.getAllShelfInLib(current_library_id)
+            # TODO: dao.getAllShelf()
         else:
             print("")
             # TODO: dao.getBooksByShelfId(current_shelf_id)
+    else:
+        print("Error in view method")
+    """
     elif len(p) == 3:
         if p[1] == 'SHELF':
             if current_library is None:
@@ -273,38 +274,31 @@ def f_view(p):
             # TODO: dao.getShelfsInLibrary(p[2].replace("\""", ""))
         else:
             print("Invalid parameters for view method")
-    else:
-        print("Error in view method")
+    """
 
 # ~~~~~~~~~~~~~~~~~~  GOTO    ~~~~~~~~~~~~~~~~~~~ #
 
 
 def f_goto(p):
     global current_shelf_id
-    global current_shelf
-    global current_library_id
     global current_library
     global dao
     if len(p) == 3:
         if p[1] == "LIBRARY":
-            library = 1 # TODO: dao.getLibraryByName(p[2].replace("\"", ""))
-            if library is None:
-                print("Bad library name")
-            else:
+            if str(p[2]).replace("\"", "").lower() in libraries:
                 current_shelf_id = None
-                current_shelf = None
-                current_library = str(p[2]).replace("\"", "")
-                current_library_id = library
+                current_library = str(p[2]).replace("\"", "").lower()
+            else:
+                print("Library doesnt exist")
         elif p[1] == "SHELF":
             if current_library is None:
                 print("Please enter a library first!")
             else:
-                shelf = 1  # TODO: dao.getShelfByName(p[2].replace("\"", ""))
+                shelf = 1  # TODO: dao.getShelfById(p[2].replace("\"", ""))
                 if shelf is None:
                     print("Bad shelf name")
                 else:
                     current_shelf_id = shelf
-                    current_shelf = p[2].replace("\"", "")
         else:
             print("Wrong entity only library or shelf permitted!")
     else:
@@ -347,19 +341,14 @@ def f_rent_book(book_name):
 
 # ~~~~~~~~~~~~~~~~~~ RETURN ~~~~~~~~~~~~~~~~~~~~ #
 
-def f_return_book(book_name):
+def f_return_book(user_name, book_id):
     global dao
-    global current_user_id
-    books = list # TODO: dao.getUserDueBooks(current_user_id)
-    if books is None:
-        print("You dont owe books")
+    due_book = list # TODO: dao.getDueBook(user_name, book_id)
+    if due_book is None:
+        print("You dont owe that book")
     else:
-        book = 1 # TODO: dao.getBookbyName(book_name)
-        if book is None:
-            print("Bad book name")
-        else:
-            print("")
-            # TODO: dao.editUserDueBooks(False, book, current_user_id)
+        print(" ")
+        # TODO: dao.changeBookAvilability(book_id, False)
 
 # ~~~~~~~~~~~~~~~~~~~~~ WHERE ~~~~~~~~~~~~~~~~~~~~~~ #
 
@@ -375,16 +364,6 @@ def f_find_location_book(book_name):
         print("True")
     else:
         print("False")
-
-
-def f_book_location(book_name):
-    print("Search book in whole library")
-
-
-def f_book_in_shelf(book_name):
-    print("Check if book in current shelf")
-    return True
-
 
 # ~~~~~~~~~~~~~~~~~ SORT ~~~~~~~~~~~~~~~~~~~#
 
