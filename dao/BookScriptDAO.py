@@ -87,10 +87,7 @@ class BookScriptDAO:
         rid = BookScriptDAO.getMaxBookRentalID (self) + 1
         query = "insert into booksrental(rid,date_rental,return_date,isrented,bid,uid) values (%s, %s, %s, %s, %s, %s);"
         cursor.execute (query, (rid, date_rental, return_date, isrented, bid, uid,))
-        result = []
-        for row in cursor:
-            result.append (row)
-        return result
+        return rid
 
     def getAllUsers(self):
         cursor = self.conn.cursor ()
