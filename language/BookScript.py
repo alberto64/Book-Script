@@ -165,25 +165,22 @@ parser = yacc.yacc()
 # ~~~~~~~~~~~~~~~~~ CODE EXECUTIONER ~~~~~~~~~~~~~~~~~~~~~ #
 # System Variables
 current_library = None
-current_library_id = None
-current_shelf = None
 current_shelf_id = None
 current_user = None
 current_user_id = None
 is_admin = False
+sort = "Ascending"
 dao = BookScriptDAO()
 libraries = ['bsdb', 'border']
 
 
 def run(p):
-    global current_library
-    global current_shelf
+    global is_admin
+    global reserved
+    global admin
     print(p)
     if type(p) == tuple:
-        if p[0] == 'VIEW':
-            f_view(p)
-            return
-        elif p[0] == 'GOTO':
+        if p[0] == 'GOTO':
             f_goto(p)
             return
         elif p[0] == 'RENT':
@@ -195,20 +192,20 @@ def run(p):
         elif p[0] == 'SORT':
             f_sort(p[1])
             return
-        elif (admin.get(str(p[0]).lower()) is not None):
-            if(is_admin):
+        elif admin.get(str(p[0]).lower()) is not None:
+            if is_admin:
                 if p[0] == 'EDIT':
                     f_edit(p)
                     return
-            elif p[0] == 'DELETE':
+                elif p[0] == 'DELETE':
                     f_delete(p)
                     return
-            elif p[0] == 'CREATE':
+                elif p[0] == 'CREATE':
                     f_create(p)
                     return
-            elif p[0] == 'RETURN':
-                f_return_book(p)
-                return
+                elif p[0] == 'RETURN':
+                    f_return_book(p)
+                    return
             else:
                 print("Permission Denied, this is only administration commands")
         elif reserved.get(str(p[0]).lower()) is None:
@@ -254,10 +251,8 @@ def run(p):
 
 
 def f_view(p):
-    global current_shelf
-    global current_shelf_id
     global current_library
-    global current_library_id
+    global current_shelf_id
     global dao
     global libraries
     if p is None:
@@ -267,13 +262,12 @@ def f_view(p):
                 print("\t" + library)
             print('---------------------')
 
-
         elif current_shelf is None:
             print("")
             results = dao.getAllShelves()
             print("Available Shelves:\n")
             for shelf in results:
-                print("\t" + str(shelf[0]))
+                print("\t" + shelf)
             print('---------------------')
         else:
             results = dao.getBooksByShelfId(current_shelf_id)
@@ -281,44 +275,36 @@ def f_view(p):
             for book in results:
                 bookinfo = ""
                 for args in book:
-                  bookinfo+= str(args) + " "
+                    bookinfo += args + " "
                 print(bookinfo)
             print('---------------------')
-
-
-
     else:
         print("Error in view method")
+
 
 # ~~~~~~~~~~~~~~~~~~  GOTO    ~~~~~~~~~~~~~~~~~~~ #
 
 
 def f_goto(p):
     global current_shelf_id
-    global current_shelf
-    global current_library_id
     global current_library
     global dao
     if len(p) == 3:
         if p[1] == "LIBRARY":
-            library = 1 # TODO: dao.getLibraryByName(p[2].replace("\"", ""))
-            if library is None:
-                print("Bad library name")
-            else:
+            if str(p[2]).replace("\"", "").replace(" ", "").lower() in libraries:
                 current_shelf_id = None
-                current_shelf = None
-                current_library = str(p[2]).replace("\"", "")
-                current_library_id = library
+                current_library = str(p[2]).replace("\"", "").replace(" ", "").lower()
+            else:
+                print("Library doesnt exist")
         elif p[1] == "SHELF":
             if current_library is None:
                 print("Please enter a library first!")
             else:
                 shelf = dao.getShelfById(p[2])
                 if shelf is None:
-                    print("Bad shelf name")
+                    print("Bad shelf id")
                 else:
                     current_shelf_id = shelf
-                    current_shelf = p[2]
         else:
             print("Wrong entity only library or shelf permitted!")
     else:
@@ -329,7 +315,7 @@ def f_goto(p):
 
 def f_rent_book(book_name):
     global dao
-    global current_library_id
+    global current_library
     global current_shelf_id
     global current_user_id
 
@@ -361,74 +347,59 @@ def f_rent_book(book_name):
 
 # ~~~~~~~~~~~~~~~~~~ RETURN ~~~~~~~~~~~~~~~~~~~~ #
 
-def f_return_book(book_name):
+def f_return_book(p):
     global dao
-    global current_user_id
-      # TODO: books = dao.getUserDueBooks(current_user_id)
-    if books is None:
-        print("You dont owe books")
-    else:
-         # TODO: book = dao.getBookbyName(book_name)
-        if book is None:
-            print("Cannot find book")
+    if len(p) == 3:
+        due_book = dao.getDueBook(str(p[1]).replace("\"", ""). lower(), p[2])
+        if due_book is None:
+            print("You dont owe that book")
         else:
-            # TODO: dao.editUserDueBooks(False, book, current_user_id)
-            print("Book has been returned!")
+            dao.changeBookAvilability(p[2], False)
+    else:
+        print("Wrong number of inputs")
 # ~~~~~~~~~~~~~~~~~~~~~ WHERE ~~~~~~~~~~~~~~~~~~~~~~ #
 
 
 def f_find_location_book(book_name):
     global current_library
-    global current_shelf
+    global dao
     if current_library is None:
         print("Please enter a library first to search for a book")
     elif current_shelf is None:
-        f_book_location(book_name)
-    elif f_book_in_shelf(book_name):
-        print("True")
+        shelfs = dao.getShelfByBook(str(book_name).replace("\"", "").replace(" ", "").lower())
+        print("The Book %s is on:" % book_name)
+        for shelf in shelfs:
+            print("\tShelf %d " % shelf)
     else:
-        print("False")
-
-
-def f_book_location(book_name):
-    print("Search book in whole library")
-
-
-def f_book_in_shelf(book_name):
-    print("Check if book in current shelf")
-    return True
-
+        print("Exit the shelf to look for a book")
 
 # ~~~~~~~~~~~~~~~~~ SORT ~~~~~~~~~~~~~~~~~~~#
 
+
 def f_sort(p):
+    global sort
     if p is None or p == "Ascending":
-        f_sort_data("Ascending")
-        print("Default is ascending order by book name")
+        sort = "Ascending"
     elif p == "Chronological":
-        f_sort_data("Chronological")
-        print("Sort books by chronological")
+        sort = "Chronological"
     elif p == "Decending":
-        f_sort_data("Decending")
-        print("Sort books by Decending")
+        sort = "Decending"
     elif p == "Genre":
-        f_sort_data("Genre")
+        sort = "Genre"
     else:
         print("Bad sort selection")
-
-
-def f_sort_data(sort_type):
-    print("Sort data base by %s " % sort_type)
+        return
+    print("Sorting way is now %s" % sort)
 
 # ~~~~~~~~~~~~~~~ BACK ~~~~~~~~~~~~~~~~~~~~ #
 
 
 def f_back():
     global current_library
-    global current_shelf
+    global current_shelf_id
     if current_library is None:
         print("You cant go back more")
-    elif current_shelf is None:
+    elif current_shelf_id is None:
         current_library = None
     else:
         current_shelf = None
@@ -443,7 +414,7 @@ def f_login():
 
     username = input("What is your username?\n > ")
     password = input("What is your password?\n > ")
-    # dao = BookScriptDAO()
+
     user = dao.getUserByUsernameAndPassword(username,password)
     if user is not None:
         current_user = username
@@ -458,8 +429,10 @@ def f_login():
 
 
 def f_logout():
+    global current_user_id
     global current_user
     global is_admin
+    current_user_id = None
     current_user = None
     is_admin = False
 
@@ -471,15 +444,15 @@ def f_register_user():
     global current_user_id
     global is_admin
     print("Please Enter the information for a new account!")
-    fullname = input("What is your Full Name?\n > ")
     username = input("What is your username?\n > ")
     email = input("What is your email?\n > ")
     password = input("What is your password?\n > ")
+    address = input("What is your address?\n > ")
+    phone = input("What is your number?\n > ")
     admin_prev = False
     if is_admin:
         admin_prev = "y" == input("Does user have administrative privileges (Y/N)\n > ").lower()
-    # dao = BookScriptDAO()
-    user_ID = 1 # dao.addUser(fullname,username,email,password,admin_prev)
+    user_ID = dao.createNewUser(username, password, address, phone, email, admin_prev)
     if user_ID is not None:
         current_user = username
         current_user_id = user_ID
@@ -707,33 +680,20 @@ def f_create(p):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~ DUE ~~~~~~~~~~~~~~~~~~~~ #
+
+
 def f_due():
+    global is_admin
+    global current_user_id
+    global dao
     if is_admin:
-        if current_library is None:
-            print("Please enter a library first")
-        else:
-            f_all_books_due()
+        due_books = dao.getAllRentedBooks()
     else:
-            f_books_due()
-
-
-def f_all_books_due():
-    global current_library
-    if current_library is None:
-        print("Please enter a library to see rented books")
-    else:
-        print("Query all rented books ")
-        dao = BookScriptDAO()
-        books = dao.getAllRentedBooks()
-        # TODO: Print the books
-
-
-def f_books_due():
-    global current_user
-    print("Print all of the users due books")
-    dao = BookScriptDAO()
-    books = dao.getAllRentedBooksFromUser
-    # TODO: Print the books
+        due_books = dao.getAllRentedBooksFromUser(current_user_id)
+    print("Current Due Books:")
+    for entry in due_books:
+        print("\t" + entry[0] + " " + entry[1] + " " + entry[2] + " " + entry[3] + " " + entry[4] + " " + entry[5])
+    print("-----------------------------")
 
 # ~~~~~~~~~~~~~~~~~ Input Handler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
