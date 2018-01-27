@@ -12,7 +12,16 @@ class BookScriptDAO:
     def getAllBooks(self):
         cursor = self.conn.cursor ()
         query = "select * from books;"
-        cursor.execute (query)
+        cursor.execute (query,)
+        result = []
+        for row in cursor:
+            result.append (row)
+        return result
+
+    def getBookByName(self,bname):
+        cursor = self.conn.cursor ()
+        query = "select * from books where bname =%s;"
+        cursor.execute (query,bname,)
         result = []
         for row in cursor:
             result.append (row)
@@ -20,7 +29,7 @@ class BookScriptDAO:
 
     def getAllShelves(self):
         cursor = self.conn.cursor ()
-        query = "select * from shelf;"
+        query = "select distinct shelfID from books;"
         cursor.execute (query)
         result = []
         for row in cursor:
@@ -29,7 +38,7 @@ class BookScriptDAO:
 
     def getBooksByShelfId(self, shelf_id):
         cursor = self.conn.cursor ()
-        query = "select bID, isbn, nname, bgenre, bauthor, bpublisher, bpublishdate from book where shelfID =%s;"
+        query = "select bID, isbn, bname, bgenre, bauthor, bpublisher, bpublishdate from book where shelfID =%s;"
         cursor.execute (query, (shelf_id,))
         result = []
         for row in cursor:
@@ -101,6 +110,16 @@ class BookScriptDAO:
             result.append (row)
         return result
 
+    def createNewBook(self,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate):
+        cursor = self.conn.cursor ()
+        bid = BookScriptDAO.getMaxBookID (self) +1
+        query = "insert into books(bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate) values (%s, %s, %s, %s, %s, %s, %s, %s) ;"
+        cursor.execute (query, (bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate,))
+        result = []
+        for row in cursor:
+            result.append (row)
+        return result
+
     def createNewUser(self,username,password,address,phone,email,isadmin):
         cursor = self.conn.cursor ()
         uid = BookScriptDAO.getMaxUserID (self) +1
@@ -111,14 +130,23 @@ class BookScriptDAO:
             result.append (row)
         return result
 
-    def changeBookAvailability(self, uid, isrented):
+    def changeBookAvailability(self, bid, isrented):
         cursor = self.conn.cursor ()
         query = "update bookrental set isrented = %s where bid = %s;"
-        cursor.execute (query, (uid,isrented,))
+        cursor.execute (query, (bid,isrented,))
         result = []
         for row in cursor:
             result.append (row)
         return result
+
+    def getMaxBookID(self):
+        cursor = self.conn.cursor()
+        query = "select max(bid) from books;"
+        cursor.execute (query)
+        maxid = cursor.fetchone ()
+        if (maxid is 0) or (maxid is None):
+            return 1;
+        return maxid[0]
 
     def getMaxBookRentalID(self):
         cursor = self.conn.cursor()
@@ -151,6 +179,7 @@ class BookScriptDAO:
         cursor.execute (query, (uid,))
         self.conn.commit ()
         return uid
+
     def getUserByUsernameAndPassword(self, username, password):
         cursor = self.conn.cursor ()
         query = "select uID, isAdmin from users where username = %s and password = %s;"
