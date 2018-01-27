@@ -168,7 +168,8 @@ current_shelf_id = None
 current_user = None
 current_user_id = None
 is_admin = False
-dao = None # BookScriptDAO()
+dao = BookScriptDAO()
+libraries = ['bsdb', 'border']
 
 
 def run(p):
@@ -251,28 +252,45 @@ def f_view(p):
     global current_library
     global current_library_id
     global dao
+    global libraries
     if p is None:
         if current_library is None:
-            print("")
-            # TODO: dao.getAllLibraries()
+            print("Available Libraries:\n")
+            for library in libraries:
+                print("\t" + library)
+            print('---------------------')
+
+
         elif current_shelf is None:
             print("")
-            # TODO: dao.getAllShelfInLib(current_library_id)
+            # TODO: results = dao.getAllShelfInLib(current_library_id)
+            print("Available Shelves:\n")
+            for shelf in results:
+                print("\t" + shelf)
+            print('---------------------')
         else:
-            print("")
-            # TODO: dao.getBooksByShelfId(current_shelf_id)
-    elif len(p) == 3:
-        if p[1] == 'SHELF':
-            if current_library is None:
-                print("Please enter a library first")
-            else:
-                print("")
-                # TODO: dao.getBooksInShelf(str(p[2]).replace("\""", ""), current_library_id)
-        elif p[1] == 'LIBRARY':
-            print("")
-            # TODO: dao.getShelfsInLibrary(p[2].replace("\""", ""))
-        else:
-            print("Invalid parameters for view method")
+            # TODO: results = dao.getBooksByShelfId(current_shelf_id)
+            print("Available Shelves:\n")
+            for book in results:
+                bookinfo = ""
+                for args in book:
+                  bookinfo+= args + " "
+                print(bookinfo)
+            print('---------------------')
+
+
+    # elif len(p) == 3:
+    #     if p[1] == 'SHELF':
+    #         if current_library is None:
+    #             print("Please enter a library first")
+    #         else:
+    #             print("")
+    #             # TODO: dao.getBooksInShelf(str(p[2]).replace("\""", ""), current_library_id)
+    #     elif p[1] == 'LIBRARY':
+    #         print("")
+    #         # TODO: dao.getShelfsInLibrary(p[2].replace("\""", ""))
+    #     else:
+    #         print("Invalid parameters for view method")
     else:
         print("Error in view method")
 
@@ -322,7 +340,7 @@ def f_rent_book(book_name):
     if current_shelf is None:
         print("Please go to a shelf first to rent a book!")
     else:
-        book = 1 # TODO: dao.getBookByName(book_name, current_shelf_id, current_library_id)
+         # TODO:book = dao.getBookByName(book_name)
         if book is None:
             print("Book given is not valid")
         else:
@@ -350,17 +368,16 @@ def f_rent_book(book_name):
 def f_return_book(book_name):
     global dao
     global current_user_id
-    books = list # TODO: dao.getUserDueBooks(current_user_id)
+      # TODO: books = dao.getUserDueBooks(current_user_id)
     if books is None:
         print("You dont owe books")
     else:
-        book = 1 # TODO: dao.getBookbyName(book_name)
+         # TODO: book = dao.getBookbyName(book_name)
         if book is None:
-            print("Bad book name")
+            print("Cannot find book")
         else:
-            print("")
             # TODO: dao.editUserDueBooks(False, book, current_user_id)
-
+            print("Book has been returned!")
 # ~~~~~~~~~~~~~~~~~~~~~ WHERE ~~~~~~~~~~~~~~~~~~~~~~ #
 
 
@@ -373,6 +390,7 @@ def f_find_location_book(book_name):
         f_book_location(book_name)
     elif f_book_in_shelf(book_name):
         print("True")
+        dao.
     else:
         print("False")
 
