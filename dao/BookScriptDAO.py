@@ -45,10 +45,16 @@ class BookScriptDAO:
             result.append (row)
         return result
 
+    def isRented(self, bid):
+        cursor = self.conn.cursor ()
+        query = "select isRented from booksrental where bid = %s;"
+        isRented = cursor.execute (query, (bid,))
+        return isRented[0]
+
     def getBookByID(self, bID):
         cursor = self.conn.cursor ()
-        query = "select * from books where bID = %s;"
-        cursor.execute (query, (bID,))
+        query = "select * from books where bid = %S AND bID NOT IN(select bID from books natural inner join booksrental where bid = %s AND isRented = 'TRUE')"
+        cursor.execute (query, (bID,bID,))
         result = []
         for row in cursor:
             result.append (row)
