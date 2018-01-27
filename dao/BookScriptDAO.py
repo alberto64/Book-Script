@@ -122,29 +122,20 @@ class BookScriptDAO:
         bid = BookScriptDAO.getMaxBookID (self) +1
         query = "insert into books(bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate) values (%s, %s, %s, %s, %s, %s, %s, %s) ;"
         cursor.execute (query, (bid,isbn,shelfid,bname,bgenre,bauthor,bpublisher,bpublishdate,))
-        result = []
-        for row in cursor:
-            result.append (row)
-        return result
+        return bid
 
     def createNewUser(self,username,password,address,phone,email,isadmin):
         cursor = self.conn.cursor ()
         uid = BookScriptDAO.getMaxUserID (self) +1
         query = "insert into users(uid,username,password,address,phone,email,isadmin) values (%s, %s, %s, %s, %s, %s, %s) ;"
         cursor.execute (query, (uid,username,password,address,phone,email,isadmin,))
-        result = []
-        for row in cursor:
-            result.append (row)
-        return result
+        return uid
 
     def changeBookAvailability(self, bid, isrented):
         cursor = self.conn.cursor ()
         query = "update bookrental set isrented = %s where bid = %s;"
         cursor.execute (query, (bid,isrented,))
-        result = []
-        for row in cursor:
-            result.append (row)
-        return result
+        return bid
 
     def getMaxBookID(self):
         cursor = self.conn.cursor()
